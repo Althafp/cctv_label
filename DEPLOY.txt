@@ -1,0 +1,26 @@
+DEPLOY TO VERCEL - COMMANDS
+
+Option 1: CLI (Fast)
+-------------------
+npm install -g vercel
+vercel login
+cd react-app
+vercel --prod
+
+Option 2: GitHub + Dashboard (Easier)
+------------------------------------
+1. Push code to GitHub
+2. Go to vercel.com
+3. Add New Project -> Import GitHub repo
+4. Settings:
+   - Root Directory: react-app
+   - Build Command: npm run build
+   - Output Directory: dist
+5. Deploy
+
+IMPORTANT:
+- Frontend: React app (static files)
+- Backend: API functions in api/ folder
+- Images: Already on GCS (no changes needed)
+- Data: /tmp is temporary - add database for production
+

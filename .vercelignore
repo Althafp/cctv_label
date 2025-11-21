@@ -1,0 +1,14 @@
+node_modules
+.git
+.vscode
+*.log
+data
+FIXED_20_11_2025
+gcs-key.json
+*.key.json
+*.md
+!README.md
+!GCS_SETUP.md
+!VERCEL_DEPLOYMENT.md
+!DEPLOYMENT_QUICKSTART.md
+

@@ -1,0 +1,18 @@
+COPY AND PASTE THIS ENTIRE BLOCK INTO POWERSHELL:
+
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+$corsJson = '[{"origin":["*"],"method":["GET","HEAD"],"responseHeader":["Content-Type","Access-Control-Allow-Origin"],"maxAgeSeconds":3600}]'
+[System.IO.File]::WriteAllText("cors.json", $corsJson, $utf8NoBom)
+gsutil cors set cors.json gs://image_labeling
+gsutil cors get gs://image_labeling
+Remove-Item cors.json
+
+OR JUST USE GOOGLE CLOUD CONSOLE (FASTER):
+1. https://console.cloud.google.com/storage/browser/image_labeling
+2. Permissions tab
+3. Edit CORS configuration
+4. Paste: [{"origin":["*"],"method":["GET","HEAD"],"responseHeader":["Content-Type","Access-Control-Allow-Origin"],"maxAgeSeconds":3600}]
+5. Save
+6. Wait 30 seconds
+7. Restart: npm run dev:all
+

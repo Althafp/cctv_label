@@ -1,0 +1,29 @@
+{
+  "users": [
+    {
+      "username": "MATRIX1",
+      "password": "APCCTV"
+    },
+    {
+      "username": "MATRIX2",
+      "password": "APCCTV"
+    },
+    {
+      "username": "MATRIX3",
+      "password": "APCCTV"
+    },
+    {
+      "username": "VIDEO1",
+      "password": "APCCTV"
+    },
+    {
+      "username": "VIDEO2",
+      "password": "APCCTV"
+    },
+    {
+      "username": "VIDEO3",
+      "password": "APCCTV"
+    }
+  ]
+}
+

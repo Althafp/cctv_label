@@ -1,0 +1,45 @@
+HOW GCP AUTHENTICATION WORKS WITHOUT gcs-key.json IN GITHUB
+================================================================
+
+1. gcs-key.json is in .gitignore (NOT in GitHub)
+   - File stays local only
+   - Never committed to git
+   - More secure
+
+2. Vercel Environment Variable
+   - Set GOOGLE_APPLICATION_CREDENTIALS_JSON in Vercel
+   - Contains the SAME JSON content as gcs-key.json
+   - Vercel injects it as environment variable at runtime
+
+3. How api/gcs-storage.js Works:
+   
+   Step 1: Tries to find gcs-key.json file
+   if (fs.existsSync(keyFile)) {
+     // Use file (for local dev)
+   }
+   
+   Step 2: If no file, checks environment variable
+   else if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+     // Parse JSON from environment variable
+     storageConfig.credentials = JSON.parse(env_var);
+   }
+   
+   Step 3: Initialize GCS with credentials
+   storage = new Storage(storageConfig);
+
+4. On Vercel:
+   - gcs-key.json file does NOT exist
+   - GOOGLE_APPLICATION_CREDENTIALS_JSON env var IS available
+   - Code uses env var → GCS authenticates successfully
+   - Same credentials, different source!
+
+5. Local Development:
+   - Has gcs-key.json file
+   - Uses file directly
+   - Works without env var
+
+RESULT: Authentication works on both local and Vercel!
+- Local: Uses gcs-key.json file
+- Vercel: Uses GOOGLE_APPLICATION_CREDENTIALS_JSON env var
+- Same credentials, secure approach
+
