@@ -32,7 +32,12 @@ const ANALYTICS_OPTIONS = [
   'Pot Hole'
 ];
 
-export default function ImageViewer() {
+interface ImageViewerProps {
+  dataset: 'existing' | 'ptz';
+  onBack?: () => void;
+}
+
+export default function ImageViewer({ dataset, onBack }: ImageViewerProps) {
   const [images, setImages] = useState<ImageInfo[]>([]);
   const [allImages, setAllImages] = useState<ImageInfo[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -216,13 +221,13 @@ export default function ImageViewer() {
       }
       
       try {
-        const success = await saveSingleImage(imageToSave);
+        const success = await saveSingleImage(imageToSave, dataset);
         
         if (success) {
           setSaveStatus({ message: '✅ Saved successfully', type: 'success' });
           // Wait a moment, then reload data to verify it was saved
           setTimeout(async () => {
-            const freshData = await loadFromBackend();
+            const freshData = await loadFromBackend(dataset);
             if (freshData) {
               const saved = freshData.find(item => item.filename === imageToSave.filename);
               if (saved) {
@@ -262,8 +267,9 @@ export default function ImageViewer() {
       setLoading(true);
       console.log('Loading image manifest...');
       
-      // Load image manifest
-      const manifestResponse = await fetch('/image-manifest.json');
+      // Load image manifest based on dataset
+      const manifestFile = dataset === 'ptz' ? '/image-manifest-ptz.json' : '/image-manifest.json';
+      const manifestResponse = await fetch(manifestFile);
       if (!manifestResponse.ok) {
         throw new Error(`Failed to load image manifest: ${manifestResponse.status} ${manifestResponse.statusText}`);
       }
@@ -332,8 +338,8 @@ export default function ImageViewer() {
       // Sort by filename
       imageList.sort((a, b) => a.filename.localeCompare(b.filename));
       
-      // Load saved data from GCS
-      const savedData = await loadFromBackend();
+      // Load saved data from GCS (dataset-specific)
+      const savedData = await loadFromBackend(dataset);
       if (savedData && savedData.length > 0) {
         console.log('Loading saved analytics from GCS...');
         // Merge saved analytics with loaded images
@@ -434,7 +440,47 @@ export default function ImageViewer() {
     <div className="image-viewer-container">
       {/* Header with Camera Details */}
       <div className="camera-header">
-        {/* Navigation Input at Top */}
+        {/* Top Bar with Back Button */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '0.5rem',
+          paddingBottom: '0.5rem',
+          borderBottom: '1px solid #444'
+        }}>
+          <div style={{ fontSize: '0.9rem', color: '#aaa' }}>
+            Dataset: {dataset === 'ptz' ? '📹 PTZ' : '📁 Existing'}
+          </div>
+          {onBack && (
+            <button
+              onClick={onBack}
+              style={{
+                padding: '8px 16px',
+                background: 'rgba(102, 126, 234, 0.8)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                fontSize: '0.9rem',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'rgba(102, 126, 234, 1)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'rgba(102, 126, 234, 0.8)';
+              }}
+            >
+              ← Back to Selection
+            </button>
+          )}
+        </div>
+        {/* Navigation Input */}
         <div className="header-navigation" style={{ 
           display: 'flex', 
           alignItems: 'center', 

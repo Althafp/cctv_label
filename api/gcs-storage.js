@@ -8,8 +8,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const BUCKET_NAME = 'image_labeling';
-const DATA_FOLDER = 'analytics-data';
 const DATA_FILE = 'image_analytics_data.json';
+
+// Get dataset-specific folder
+const getDataFolder = (dataset = 'existing') => {
+  return dataset === 'ptz' ? 'analytics-data-ptz' : 'analytics-data';
+};
 
 // Initialize GCS client
 let storage = null;
@@ -61,8 +65,8 @@ const initGCS = () => {
   }
 };
 
-// Save data to GCS
-export const saveToGCS = async (data) => {
+// Save data to GCS with generation check (prevents overwriting concurrent changes)
+export const saveToGCS = async (data, dataset = 'existing', expectedGeneration = null) => {
   try {
     initGCS();
     if (!bucket) {
@@ -70,20 +74,34 @@ export const saveToGCS = async (data) => {
       return false;
     }
 
-    const filePath = `${DATA_FOLDER}/${DATA_FILE}`;
+    const dataFolder = getDataFolder(dataset);
+    const filePath = `${dataFolder}/${DATA_FILE}`;
     const file = bucket.file(filePath);
     
-    // Save the file - GCS will automatically "create" the folder path
-    await file.save(JSON.stringify(data, null, 2), {
+    const saveOptions = {
       contentType: 'application/json',
       metadata: {
         cacheControl: 'no-cache',
       },
-    });
+    };
+    
+    // If we have an expected generation, use conditional save (optimistic locking)
+    if (expectedGeneration !== null) {
+      saveOptions.ifGenerationMatch = expectedGeneration;
+    }
+    
+    // Save the file - GCS will automatically "create" the folder path
+    await file.save(JSON.stringify(data, null, 2), saveOptions);
 
-    console.log(`✅ Saved analytics data to gs://${BUCKET_NAME}/${filePath}`);
+    console.log(`✅ Saved analytics data to gs://${BUCKET_NAME}/${filePath}${expectedGeneration ? ` (generation: ${expectedGeneration})` : ''}`);
     return true;
   } catch (error) {
+    // Check if it's a generation mismatch (concurrent modification)
+    if (error.code === 412 || error.message?.includes('Precondition Failed')) {
+      console.warn(`⚠️ Generation mismatch detected - file was modified by another user`);
+      return { conflict: true, error: 'CONCURRENT_MODIFICATION' };
+    }
+    
     console.error('Error saving to GCS:', error);
     console.error('Error details:', {
       message: error?.message,
@@ -94,8 +112,8 @@ export const saveToGCS = async (data) => {
   }
 };
 
-// Load data from GCS
-export const loadFromGCS = async () => {
+// Load data from GCS with generation number (for conflict detection)
+export const loadFromGCS = async (dataset = 'existing') => {
   try {
     initGCS();
     if (!bucket) {
@@ -103,7 +121,8 @@ export const loadFromGCS = async () => {
       return null;
     }
 
-    const filePath = `${DATA_FOLDER}/${DATA_FILE}`;
+    const dataFolder = getDataFolder(dataset);
+    const filePath = `${dataFolder}/${DATA_FILE}`;
     const file = bucket.file(filePath);
     
     const [exists] = await file.exists();
@@ -112,24 +131,34 @@ export const loadFromGCS = async () => {
       return null;
     }
 
-    // Download with no cache to ensure fresh data
-    const [contents] = await file.download({
-      validation: false // Skip validation for faster download
-    });
-    const data = JSON.parse(contents.toString('utf8'));
+    // Download with metadata to get generation number
+    const [contents, metadata] = await Promise.all([
+      file.download({ validation: false }),
+      file.getMetadata()
+    ]);
     
-    console.log(`✅ Loaded analytics data from gs://${BUCKET_NAME}/${filePath} (${data?.length || 0} items)`);
-    return data;
+    const data = JSON.parse(contents.toString('utf8'));
+    const generation = metadata.generation;
+    
+    console.log(`✅ Loaded analytics data from gs://${BUCKET_NAME}/${filePath} (${data?.length || 0} items, generation: ${generation})`);
+    return { data, generation };
   } catch (error) {
     console.error('Error loading from GCS:', error.message);
     return null;
   }
 };
 
+// Load data from GCS (backward compatible - returns just data)
+export const loadFromGCSData = async (dataset = 'existing') => {
+  const result = await loadFromGCS(dataset);
+  return result ? result.data : null;
+};
+
 // Fallback to /tmp for Vercel if GCS fails
-export const getFallbackPath = () => {
-  const tmpPath = '/tmp/image_analytics_data.json';
-  const localPath = path.join(__dirname, '../data/image_analytics_data.json');
+export const getFallbackPath = (dataset = 'existing') => {
+  const suffix = dataset === 'ptz' ? '_ptz' : '';
+  const tmpPath = `/tmp/image_analytics_data${suffix}.json`;
+  const localPath = path.join(__dirname, `../data/image_analytics_data${suffix}.json`);
   return process.env.VERCEL ? tmpPath : localPath;
 };
 

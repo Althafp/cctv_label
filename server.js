@@ -67,6 +67,9 @@ const mergeData = (existingData, newData) => {
 // Save image analytics data
 app.post('/api/save-analytics', async (req, res) => {
   try {
+    // Get dataset from query parameter
+    const dataset = req.query?.dataset === 'ptz' ? 'ptz' : 'existing';
+    
     // Handle both old format (array) and new format (object with isPartialUpdate and data)
     let data = req.body;
     let isPartialUpdate = false;
@@ -114,23 +117,59 @@ app.post('/api/save-analytics', async (req, res) => {
     
     // If partial update, merge with existing data
     if (isPartialUpdate) {
-      // Load existing data from GCS or local
-      let existingData = await loadFromGCS();
+      // Load existing data from GCS or local (dataset-specific)
+      const gcsResult = await loadFromGCS(dataset);
+      let existingData = gcsResult ? (gcsResult.data || gcsResult) : null;
       if (!existingData) {
-        const filePath = getFallbackPath();
+        const filePath = getFallbackPath(dataset);
         if (fs.existsSync(filePath)) {
           existingData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         }
       }
       
-      if (existingData) {
+      if (existingData && Array.isArray(existingData)) {
         dataToSave = mergeData(existingData, data);
-        console.log(`Merging ${data.length} image(s) into existing ${existingData.length} images`);
+        const expectedGeneration = gcsResult?.generation || null;
+        console.log(`Merging ${data.length} image(s) into existing ${existingData.length} images [dataset: ${dataset}]`);
+        
+        // Try GCS with generation check (optimistic locking)
+        const gcsResult_save = await saveToGCS(dataToSave, dataset, expectedGeneration);
+        if (gcsResult_save === true) {
+          console.log('Saved analytics data to GCS');
+          return res.json({ 
+            success: true, 
+            message: isPartialUpdate ? 'Image data merged successfully' : 'Data saved successfully to GCS',
+            storage: 'GCS',
+            merged: isPartialUpdate,
+            imagesUpdated: data.length
+          });
+        } else if (gcsResult_save && gcsResult_save.conflict) {
+          // Concurrent modification - retry once
+          console.log('⚠️ Concurrent modification detected, retrying...');
+          const retryResult = await loadFromGCS(dataset);
+          const retryData = retryResult ? (retryResult.data || retryResult) : existingData;
+          if (retryData && Array.isArray(retryData)) {
+            dataToSave = mergeData(retryData, data);
+            const retrySuccess = await saveToGCS(dataToSave, dataset, retryResult?.generation || null);
+            if (retrySuccess === true) {
+              console.log('Saved analytics data to GCS (after retry)');
+              return res.json({ 
+                success: true, 
+                message: 'Image data merged successfully (retried due to concurrent save)',
+                storage: 'GCS',
+                merged: isPartialUpdate,
+                imagesUpdated: data.length
+              });
+            }
+          }
+        }
+      } else {
+        dataToSave = data;
       }
     }
     
-    // Try GCS first
-    const gcsSuccess = await saveToGCS(dataToSave);
+    // Try GCS first (dataset-specific) - for non-partial or if retry failed
+    const gcsSuccess = await saveToGCS(dataToSave, dataset);
     
     if (gcsSuccess) {
       console.log('Saved analytics data to GCS');
@@ -143,15 +182,15 @@ app.post('/api/save-analytics', async (req, res) => {
       });
     }
     
-    // Fallback to local file
-    const filePath = getFallbackPath();
+    // Fallback to local file (dataset-specific)
+    const filePath = getFallbackPath(dataset);
     const dir = path.dirname(filePath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
     
     fs.writeFileSync(filePath, JSON.stringify(dataToSave, null, 2), 'utf8');
-    console.log(`Saved analytics data to ${filePath} (fallback)`);
+    console.log(`Saved analytics data to ${filePath} (fallback) [dataset: ${dataset}]`);
     res.json({ 
       success: true, 
       message: 'Data saved successfully', 
@@ -169,14 +208,17 @@ app.post('/api/save-analytics', async (req, res) => {
 // Load image analytics data
 app.get('/api/load-analytics', async (req, res) => {
   try {
-    // Try GCS first
-    const gcsData = await loadFromGCS();
+    // Get dataset from query parameter
+    const dataset = req.query?.dataset === 'ptz' ? 'ptz' : 'existing';
+    
+    // Try GCS first (dataset-specific)
+    const gcsData = await loadFromGCS(dataset);
     if (gcsData) {
       return res.json({ success: true, data: gcsData, source: 'GCS' });
     }
     
-    // Fallback to local file
-    const filePath = getFallbackPath();
+    // Fallback to local file (dataset-specific)
+    const filePath = getFallbackPath(dataset);
     if (fs.existsSync(filePath)) {
       const data = fs.readFileSync(filePath, 'utf8');
       return res.json({ success: true, data: JSON.parse(data), source: 'local' });

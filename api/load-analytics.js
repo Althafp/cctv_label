@@ -17,19 +17,22 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Get dataset from query parameter
+  const dataset = req.query?.dataset === 'ptz' ? 'ptz' : 'existing';
+
   try {
     // Try GCS first - always get fresh data (no cache)
-    const gcsData = await loadFromGCS();
-    if (gcsData) {
+    const gcsResult = await loadFromGCS(dataset);
+    if (gcsResult && gcsResult.data) {
       // Set headers to prevent browser caching
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
-      return res.status(200).json({ success: true, data: gcsData, source: 'GCS' });
+      return res.status(200).json({ success: true, data: gcsResult.data, source: 'GCS' });
     }
 
     // Fallback to file system
-    const dataPath = getFallbackPath();
+    const dataPath = getFallbackPath(dataset);
     if (fs.existsSync(dataPath)) {
       const data = fs.readFileSync(dataPath, 'utf8');
       return res.status(200).json({ success: true, data: JSON.parse(data), source: 'file' });

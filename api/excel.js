@@ -19,12 +19,16 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Get dataset from query parameter (default to existing)
+    const dataset = req.query?.dataset === 'ptz' ? 'ptz' : 'existing';
+    
     // Try GCS first
-    let jsonData = await loadFromGCS();
+    const gcsResult = await loadFromGCS(dataset);
+    let jsonData = gcsResult ? (gcsResult.data || gcsResult) : null;
     
     // Fallback to file system
     if (!jsonData) {
-      const filePath = getFallbackPath();
+      const filePath = getFallbackPath(dataset);
       if (!fs.existsSync(filePath)) {
         return res.status(404).json({ error: 'No data file found. Please save some analytics data first.' });
       }

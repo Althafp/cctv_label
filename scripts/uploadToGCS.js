@@ -8,9 +8,9 @@ const __dirname = path.dirname(__filename);
 
 // GCS Configuration
 const BUCKET_NAME = 'image_labeling';
-const FOLDER_NAME = 'images'; // Folder inside the bucket
-const KEY_FILE = path.join(__dirname, '../../gcs-key.json'); // Outside react-app folder
-const IMAGES_FOLDER = path.join(__dirname, '../FIXED_20_11_2025');
+const FOLDER_NAME = 'images-ptz'; // Folder inside the bucket
+const KEY_FILE = path.join(__dirname, '../gcs-key.json'); // Outside react-app folder
+const IMAGES_FOLDER = path.join(__dirname, '../ptz_22_11_25');
 
 // Initialize GCS client
 const storage = new Storage({

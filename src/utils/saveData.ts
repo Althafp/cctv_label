@@ -133,6 +133,7 @@ interface QueuedSave {
   images: ImageInfo[];
   resolve: (value: boolean) => void;
   reject: (error: Error) => void;
+  dataset: 'existing' | 'ptz';
 }
 
 let saveQueue: QueuedSave[] = [];
@@ -154,6 +155,9 @@ async function processSaveQueue(): Promise<void> {
   saveQueue = [];
   saveTimeout = null;
 
+  // Get dataset from first item (all items in batch should have same dataset)
+  const dataset = queueToProcess[0]?.dataset || 'existing';
+
   try {
     // Collect all unique images from queue (by filename, latest version wins)
     const imageMap = new Map<string, ImageInfo>();
@@ -164,14 +168,14 @@ async function processSaveQueue(): Promise<void> {
     }
 
     const allImages = Array.from(imageMap.values());
-    console.log(`📦 Processing save queue: ${allImages.length} unique image(s) from ${queueToProcess.length} save request(s)`);
+    console.log(`📦 Processing save queue: ${allImages.length} unique image(s) from ${queueToProcess.length} save request(s) [dataset: ${dataset}]`);
 
     const savedData = convertToSavedFormat(allImages);
     
     // Send as partial update (always merge with existing data)
     const payload = { isPartialUpdate: true, data: savedData };
     
-    const response = await fetch('/api/save-analytics', {
+    const response = await fetch(`/api/save-analytics?dataset=${dataset}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -216,7 +220,7 @@ async function processSaveQueue(): Promise<void> {
  * @param images - ImageInfo array to save (can be single image or multiple)
  * @param isPartialUpdate - If true, merges with existing data instead of overwriting
  */
-export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = true): Promise<boolean> {
+export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = true, dataset: 'existing' | 'ptz' = 'existing'): Promise<boolean> {
   // Validate input
   if (!images || images.length === 0) {
     console.warn('⚠️ Cannot save empty images array');
@@ -229,15 +233,15 @@ export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = 
       const savedData = convertToSavedFormat(images);
       const payload = savedData;
       
-      const response = await fetch('/api/save-analytics', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
-        },
-        body: JSON.stringify(payload),
-        cache: 'no-store'
-      });
+    const response = await fetch(`/api/save-analytics?dataset=${dataset}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+      },
+      body: JSON.stringify(payload),
+      cache: 'no-store'
+    });
       
       if (response.ok) {
         // const result = await response.json();
@@ -255,8 +259,9 @@ export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = 
   }
 
   // For partial updates, use queue to batch rapid saves
+  // Store dataset with each queued item
   return new Promise<boolean>((resolve, reject) => {
-    saveQueue.push({ images, resolve, reject });
+    saveQueue.push({ images, resolve, reject, dataset });
     
     // Count total images in queue
     const totalImagesInQueue = saveQueue.reduce((sum, q) => sum + q.images.length, 0);
@@ -281,8 +286,8 @@ export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = 
 /**
  * Save single image to GCS (merges with existing data)
  */
-export async function saveSingleImage(image: ImageInfo): Promise<boolean> {
-  return saveToGCS([image], true);
+export async function saveSingleImage(image: ImageInfo, dataset: 'existing' | 'ptz' = 'existing'): Promise<boolean> {
+  return saveToGCS([image], true, dataset);
 }
 
 /**
@@ -295,10 +300,10 @@ export function saveData(images: ImageInfo[]): void {
 /**
  * Load from GCS via backend API (no localStorage fallback)
  */
-export async function loadFromBackend(): Promise<SavedImageData[] | null> {
+export async function loadFromBackend(dataset: 'existing' | 'ptz' = 'existing'): Promise<SavedImageData[] | null> {
   try {
     // Add cache-busting to prevent browser cache from serving stale data
-    const cacheBuster = `?t=${Date.now()}`;
+    const cacheBuster = `?t=${Date.now()}&dataset=${dataset}`;
     const response = await fetch(`/api/load-analytics${cacheBuster}`, {
       method: 'GET',
       headers: {
