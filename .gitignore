@@ -34,3 +34,4 @@ FIXED_20_11_2025/
 !tsconfig*.json
 !public/*.json
 !*.config.json
+.env
