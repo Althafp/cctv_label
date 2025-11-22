@@ -1,0 +1,91 @@
+================================================================================
+HOW TO MERGE ALL VERSIONS FROM GCS
+================================================================================
+
+YES, it's possible to take the union of JSON from all versions!
+
+================================================================================
+WHAT THE SCRIPT DOES
+================================================================================
+
+1. Connects to GCS bucket: image_labeling
+2. Lists ALL versions of: analytics-data/image_analytics_data.json
+3. Downloads each version
+4. Merges them by taking UNION:
+   - For each image (by filename):
+     - Analytics: If ANY version has "yes", keep "yes" (union)
+     - Labels: Combine all labels from all versions
+     - Keeps latest image dimensions
+5. Saves merged result to: merged_all_versions.json
+
+================================================================================
+HOW TO RUN
+================================================================================
+
+OPTION 1: Using npm script
+---------------------------
+cd "d:\chandu sir\Video_analytics_labeling\react-app"
+npm run merge-versions
+
+OPTION 2: Direct node command
+------------------------------
+cd "d:\chandu sir\Video_analytics_labeling\react-app"
+node scripts/merge-all-versions.js
+
+================================================================================
+REQUIREMENTS
+================================================================================
+
+✅ Object versioning must be enabled on GCS bucket (you already did this)
+✅ gcs-key.json must exist OR GOOGLE_APPLICATION_CREDENTIALS_JSON env var set
+✅ @google-cloud/storage package installed (already in package.json)
+
+================================================================================
+WHAT YOU'LL GET
+================================================================================
+
+Output file: react-app/merged_all_versions.json
+
+Contains:
+- All unique images from all versions
+- Union of all analytics (if any version had "yes", it's "yes")
+- All labels from all versions combined
+- Latest image dimensions
+- Proper S.No numbering
+
+================================================================================
+EXAMPLE OUTPUT
+================================================================================
+
+The script will show:
+- "Found X versions"
+- "Downloading version 1/X..."
+- "✓ Loaded Y images"
+- "Merged result: Z unique images"
+- Analytics summary
+- Images with labels count
+
+================================================================================
+AFTER MERGING
+================================================================================
+
+You can:
+1. Review the merged_all_versions.json file
+2. Upload it back to GCS to replace current version
+3. Or keep it as backup
+
+To upload back to GCS (optional):
+- Manually upload via GCS Console, OR
+- Use the save button in the app to save it
+
+================================================================================
+IMPORTANT NOTES
+================================================================================
+
+- The merge takes UNION of analytics (if any version says "yes", result is "yes")
+- Labels are combined from all versions
+- If same image appears in multiple versions, latest data is kept
+- The script preserves all unique images from all versions
+
+================================================================================
+

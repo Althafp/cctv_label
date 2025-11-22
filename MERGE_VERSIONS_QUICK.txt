@@ -1,0 +1,42 @@
+================================================================================
+QUICK GUIDE: MERGE ALL VERSIONS FROM GCS
+================================================================================
+
+YES - You can take union of JSON from all versions!
+
+================================================================================
+RUN THIS COMMAND
+================================================================================
+
+cd "d:\chandu sir\Video_analytics_labeling\react-app"
+npm run merge-versions
+
+OR
+
+node scripts/merge-all-versions.js
+
+================================================================================
+WHAT IT DOES
+================================================================================
+
+1. Connects to GCS
+2. Lists ALL versions of image_analytics_data.json
+3. Downloads each version
+4. Merges by UNION:
+   - Analytics: If ANY version has "yes" → keep "yes"
+   - Labels: Combine ALL labels from all versions
+   - Images: Keep all unique images
+5. Saves to: merged_all_versions.json
+
+================================================================================
+OUTPUT
+================================================================================
+
+File: react-app/merged_all_versions.json
+- Contains union of all versions
+- All analytics from all versions combined
+- All labels from all versions
+- Complete dataset with no data loss
+
+================================================================================
+

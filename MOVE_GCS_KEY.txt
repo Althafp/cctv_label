@@ -1,0 +1,40 @@
+================================================================================
+MOVE gcs-key.json OUTSIDE react-app FOLDER
+================================================================================
+
+WHAT TO DO:
+-----------
+
+1. MOVE THE FILE:
+   FROM: d:\chandu sir\Video_analytics_labeling\react-app\gcs-key.json
+   TO:   d:\chandu sir\Video_analytics_labeling\gcs-key.json
+   
+   (Move it one level up, outside react-app folder)
+
+2. THE SCRIPT IS UPDATED:
+   - merge-all-versions.js now has credentials embedded
+   - No longer needs gcs-key.json file
+   - Can run standalone
+
+3. RUN THE SCRIPT:
+   cd "d:\chandu sir\Video_analytics_labeling\react-app"
+   npm run merge-versions
+
+================================================================================
+WHY MOVE IT OUTSIDE?
+================================================================================
+
+- Keep sensitive file outside the project
+- Script has credentials embedded now
+- Safer for git (already in .gitignore)
+- Script works independently
+
+================================================================================
+MANUAL MOVE COMMAND (if needed)
+================================================================================
+
+In File Explorer or PowerShell:
+Move-Item "d:\chandu sir\Video_analytics_labeling\react-app\gcs-key.json" "d:\chandu sir\Video_analytics_labeling\gcs-key.json"
+
+================================================================================
+

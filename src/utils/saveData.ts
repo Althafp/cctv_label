@@ -163,8 +163,10 @@ export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
       },
       body: JSON.stringify(payload),
+      cache: 'no-store' // Prevent browser from caching the request
     });
     
     if (response.ok) {
@@ -201,7 +203,16 @@ export function saveData(images: ImageInfo[]): void {
  */
 export async function loadFromBackend(): Promise<SavedImageData[] | null> {
   try {
-    const response = await fetch('/api/load-analytics');
+    // Add cache-busting to prevent browser cache from serving stale data
+    const cacheBuster = `?t=${Date.now()}`;
+    const response = await fetch(`/api/load-analytics${cacheBuster}`, {
+      method: 'GET',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
     if (response.ok) {
       const result = await response.json();
       if (result.success && result.data) {

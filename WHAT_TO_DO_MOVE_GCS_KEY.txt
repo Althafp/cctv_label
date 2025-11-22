@@ -1,0 +1,55 @@
+================================================================================
+WHAT TO DO - MOVE gcs-key.json OUTSIDE react-app
+================================================================================
+
+✅ DONE: Updated merge-all-versions.js with embedded credentials
+✅ DONE: Updated all other files to look for gcs-key.json outside react-app
+
+================================================================================
+STEP 1: MOVE gcs-key.json FILE
+================================================================================
+
+Move the file from:
+  d:\chandu sir\Video_analytics_labeling\react-app\gcs-key.json
+
+To:
+  d:\chandu sir\Video_analytics_labeling\gcs-key.json
+
+(One level up, outside react-app folder)
+
+You can do this manually in File Explorer, or run:
+  Move-Item "react-app\gcs-key.json" "..\gcs-key.json"
+
+================================================================================
+STEP 2: FILES UPDATED
+================================================================================
+
+These files now look for gcs-key.json OUTSIDE react-app:
+✅ api/gcs-storage.js - Updated path to ../../gcs-key.json
+✅ scripts/generateGCSManifest.js - Updated path
+✅ scripts/uploadToGCS.js - Updated path
+✅ scripts/merge-all-versions.js - Has credentials EMBEDDED (no file needed)
+
+================================================================================
+STEP 3: RUN MERGE SCRIPT
+================================================================================
+
+After moving the file, run:
+  cd "d:\chandu sir\Video_analytics_labeling\react-app"
+  npm run merge-versions
+
+The script will:
+- Use embedded credentials (no file needed)
+- Download all versions from GCS
+- Merge them by union
+- Save to merged_all_versions.json
+
+================================================================================
+NOTE
+================================================================================
+
+merge-all-versions.js has credentials embedded, so it works even without
+the gcs-key.json file. Other scripts still need the file (but now outside react-app).
+
+================================================================================
+

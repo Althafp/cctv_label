@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 // GCS Configuration
 const BUCKET_NAME = 'image_labeling';
 const FOLDER_NAME = 'images';
-const KEY_FILE = path.join(__dirname, '../gcs-key.json');
+const KEY_FILE = path.join(__dirname, '../../gcs-key.json'); // Outside react-app folder
 const OUTPUT_FILE = path.join(__dirname, '../public/image-manifest.json');
 
 // Initialize GCS client

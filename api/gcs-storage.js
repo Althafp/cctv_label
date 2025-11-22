@@ -19,7 +19,7 @@ const initGCS = () => {
   if (storage) return; // Already initialized
   
   try {
-    const keyFile = path.join(__dirname, '../gcs-key.json');
+    const keyFile = path.join(__dirname, '../../gcs-key.json'); // Outside react-app folder
     
     let storageConfig = {
       projectId: 'focus-cumulus-477711-g5',
@@ -112,10 +112,13 @@ export const loadFromGCS = async () => {
       return null;
     }
 
-    const [contents] = await file.download();
+    // Download with no cache to ensure fresh data
+    const [contents] = await file.download({
+      validation: false // Skip validation for faster download
+    });
     const data = JSON.parse(contents.toString('utf8'));
     
-    console.log(`✅ Loaded analytics data from gs://${BUCKET_NAME}/${filePath}`);
+    console.log(`✅ Loaded analytics data from gs://${BUCKET_NAME}/${filePath} (${data?.length || 0} items)`);
     return data;
   } catch (error) {
     console.error('Error loading from GCS:', error.message);

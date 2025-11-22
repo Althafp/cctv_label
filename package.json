@@ -13,6 +13,7 @@
     "generate-manifest": "node scripts/generateImageManifest.js",
     "upload-gcs": "node scripts/uploadToGCS.js",
     "generate-gcs-manifest": "node scripts/generateGCSManifest.js",
+    "merge-versions": "node scripts/merge-all-versions.js",
     "vercel-build": "npm run build"
   },
   "dependencies": {

@@ -198,12 +198,29 @@ export default function ImageViewer() {
       // Find the current image in allImages to get the latest state
       const imageToSave = allImages.find(img => img.filename === currentImg.filename) || currentImg;
       
+      console.log('Saving image:', imageToSave.filename);
+      console.log('Analytics to save:', Array.from(imageToSave.assignedAnalytics));
+      console.log('Labels to save:', imageToSave.labels?.length || 0);
+      
       const success = await saveSingleImage(imageToSave);
       
       if (success) {
         setSaveStatus({ message: '✅ Saved successfully', type: 'success' });
-        // Clear status after 2 seconds
-        setTimeout(() => setSaveStatus({ message: '', type: null }), 2000);
+        // Wait a moment, then reload data to verify it was saved
+        setTimeout(async () => {
+          const freshData = await loadFromBackend();
+          if (freshData) {
+            const saved = freshData.find(item => item.filename === imageToSave.filename);
+            if (saved) {
+              const savedAnalytics = ANALYTICS_OPTIONS.filter(opt => saved[opt as keyof typeof saved] === 'yes');
+              console.log('✅ Verified save - Analytics in GCS:', savedAnalytics);
+            } else {
+              console.warn('⚠️ Saved image not found in GCS after save');
+            }
+          }
+        }, 1000);
+        // Clear status after 3 seconds
+        setTimeout(() => setSaveStatus({ message: '', type: null }), 3000);
       } else {
         setSaveStatus({ message: '❌ Failed to save', type: 'error' });
         setTimeout(() => setSaveStatus({ message: '', type: null }), 3000);

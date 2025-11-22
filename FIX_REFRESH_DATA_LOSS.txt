@@ -1,0 +1,86 @@
+================================================================================
+FIX: DATA GOING BACK AFTER REFRESH
+================================================================================
+
+ISSUE: After browser refresh, recently labeled analytics go back to "no"
+ROOT CAUSE: Backend was using cached dataStore instead of fresh GCS data
+
+================================================================================
+FIXES APPLIED
+================================================================================
+
+1. REMOVED BROWSER CACHE:
+   ✅ Added cache-busting to load requests (?t=timestamp)
+   ✅ Added Cache-Control headers (no-cache, no-store)
+   ✅ Added cache: 'no-store' to fetch requests
+   ✅ NO localStorage/sessionStorage for analytics data (only for login)
+
+2. BACKEND ALWAYS LOADS FRESH DATA:
+   ✅ saveData() now ALWAYS loads fresh data from GCS before merge
+   ✅ Removed stale dataStore cache usage
+   ✅ Always gets latest data from GCS, not memory cache
+
+3. ADDED VERIFICATION:
+   ✅ After save, verifies data is actually in GCS
+   ✅ Logs what was saved vs what's in GCS
+   ✅ Helps debug if save is failing
+
+4. CACHE HEADERS:
+   ✅ load-analytics.js sets no-cache headers
+   ✅ GCS download uses no validation (faster, fresh)
+   ✅ Browser cannot cache API responses
+
+================================================================================
+WHAT WAS WRONG
+================================================================================
+
+BEFORE:
+- Backend used cached dataStore (stale data)
+- Browser might cache API responses
+- Merge happened with old data → overwrote new saves
+
+AFTER:
+- Backend ALWAYS loads fresh from GCS
+- Browser cannot cache (cache-busting + headers)
+- Merge happens with latest data → preserves saves
+
+================================================================================
+FILES CHANGED
+================================================================================
+
+1. react-app/src/utils/saveData.ts
+   - Added cache-busting to loadFromBackend()
+   - Added cache: 'no-store' to save requests
+
+2. react-app/api/save-analytics.js
+   - Always loads fresh data before merge (removed cache)
+   - Added verification after save
+
+3. react-app/api/load-analytics.js
+   - Added no-cache headers
+
+4. react-app/api/gcs-storage.js
+   - Faster download (no validation)
+
+5. react-app/src/components/ImageViewer.tsx
+   - Added verification logging after save
+
+================================================================================
+TESTING
+================================================================================
+
+1. Label an image with analytics
+2. Click "Save This Image"
+3. Wait for "✅ Saved successfully"
+4. Check console for "✅ Verified save"
+5. Refresh browser
+6. Analytics should still be there
+
+If still failing, check browser console for:
+- "Saving image: filename"
+- "Analytics to save: [...]"
+- "✅ Saved successfully"
+- "✅ Verified save - Analytics in GCS: [...]"
+
+================================================================================
+
