@@ -79,24 +79,24 @@ export default function ImageWithLabels({
     if (!canvas || !img || !container) return;
     if (!img.naturalWidth || !img.naturalHeight) return;
 
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-    const imgAspect = img.naturalWidth / img.naturalHeight;
-    const containerAspect = containerWidth / containerHeight;
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+      const imgAspect = img.naturalWidth / img.naturalHeight;
+      const containerAspect = containerWidth / containerHeight;
 
-    let canvasWidth, canvasHeight;
-    if (imgAspect > containerAspect) {
-      canvasWidth = containerWidth;
+      let canvasWidth, canvasHeight;
+      if (imgAspect > containerAspect) {
+        canvasWidth = containerWidth;
       canvasHeight = canvasWidth / imgAspect;
-    } else {
-      canvasHeight = containerHeight;
-      canvasWidth = containerHeight * imgAspect;
-    }
+      } else {
+        canvasHeight = containerHeight;
+        canvasWidth = containerHeight * imgAspect;
+      }
 
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    drawLabels();
-  };
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      drawLabels();
+    };
 
   // Reset loading state when image source changes
   useEffect(() => {
@@ -134,12 +134,12 @@ export default function ImageWithLabels({
     setImageError(null);
     
     // Update canvas immediately
-    updateCanvasSize();
+      updateCanvasSize();
     
-    if (onImageLoad) {
-      onImageLoad(img.naturalWidth, img.naturalHeight);
-    }
-  };
+      if (onImageLoad) {
+        onImageLoad(img.naturalWidth, img.naturalHeight);
+      }
+    };
 
   const handleImageError = () => {
     setIsLoading(false);
