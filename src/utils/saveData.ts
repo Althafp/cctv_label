@@ -240,7 +240,7 @@ export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = 
       });
       
       if (response.ok) {
-        const result = await response.json();
+        // const result = await response.json();
         console.log(`✅ Saved ${images.length} image(s) to GCS (full update)`);
         return true;
       } else {
