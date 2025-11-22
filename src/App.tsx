@@ -60,10 +60,13 @@ function App() {
             border: 'none',
             borderRadius: '6px',
             cursor: 'pointer',
-            fontWeight: '600'
+            fontWeight: '600',
+            transition: 'all 0.2s'
           }}
+          onMouseOver={(e) => e.currentTarget.style.background = '#f0f0f0'}
+          onMouseOut={(e) => e.currentTarget.style.background = 'white'}
         >
-          Logout
+          🚪 Logout
         </button>
       </div>
       <ImageViewer />

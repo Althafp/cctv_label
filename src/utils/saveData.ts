@@ -63,7 +63,7 @@ export function convertToSavedFormat(images: ImageInfo[]): SavedImageData[] {
     });
     
     return {
-      'S.No': index + 1,
+      'S.No': index + 1, // Will be recalculated by backend merge
       'Old DISTRICT': cameraData ? String(cameraData['Old DISTRICT'] || '') : '',
       'NEW DISTRICT': cameraData ? String(cameraData['NEW DISTRICT'] || '') : '',
       'MANDAL': cameraData ? String(cameraData['MANDAL'] || '') : '',
@@ -130,46 +130,70 @@ export function loadImageDataFromFile(file: File): Promise<SavedImageData[]> {
 
 // Throttle GCS saves to avoid too many API calls
 let lastFileSaveTime = 0;
-const FILE_SAVE_THROTTLE_MS = 2000; // Save to GCS at most once every 2 seconds
+const FILE_SAVE_THROTTLE_MS = 1000; // Save to GCS at most once every 1 second
 
 /**
- * Save to GCS via backend API (GCP only, no localStorage)
+ * Save single image or multiple images to GCS via backend API
+ * @param images - ImageInfo array to save (can be single image or multiple)
+ * @param isPartialUpdate - If true, merges with existing data instead of overwriting
  */
-export async function saveToGCS(images: ImageInfo[]): Promise<void> {
+export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = true): Promise<boolean> {
+  // Validate input
+  if (!images || images.length === 0) {
+    console.warn('Cannot save empty images array');
+    return false;
+  }
+  
   const now = Date.now();
-  if (now - lastFileSaveTime < FILE_SAVE_THROTTLE_MS) {
-    return; // Skip if too soon since last save
+  if (now - lastFileSaveTime < FILE_SAVE_THROTTLE_MS && isPartialUpdate) {
+    // For partial updates, allow more frequent saves but still throttle
+    return false; // Skip if too soon since last save
   }
   lastFileSaveTime = now;
   
   try {
     const savedData = convertToSavedFormat(images);
     
+    // Send as array with isPartialUpdate flag in a way backend can understand
+    const payload = isPartialUpdate 
+      ? { isPartialUpdate: true, data: savedData }
+      : savedData;
+    
     const response = await fetch('/api/save-analytics', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(savedData),
+      body: JSON.stringify(payload),
     });
     
     if (response.ok) {
       const result = await response.json();
-      console.log(`✅ Saved to GCS: ${result.storage || 'GCS'}`);
+      console.log(`✅ Saved ${images.length} image(s) to GCS: ${result.storage || 'GCS'}${result.merged ? ' (merged)' : ''}`);
+      return true;
     } else {
       const errorData = await response.json().catch(() => ({}));
       console.error('Failed to save to GCS:', errorData.error || 'Unknown error');
+      return false;
     }
   } catch (error) {
     console.error('Error saving to GCS:', error);
+    return false;
   }
 }
 
 /**
- * Save data to GCS only (no localStorage)
+ * Save single image to GCS (merges with existing data)
+ */
+export async function saveSingleImage(image: ImageInfo): Promise<boolean> {
+  return saveToGCS([image], true);
+}
+
+/**
+ * Save all images to GCS (full overwrite - use with caution)
  */
 export function saveData(images: ImageInfo[]): void {
-  saveToGCS(images);
+  saveToGCS(images, false); // Full save, not partial
 }
 
 /**
@@ -192,4 +216,5 @@ export async function loadFromBackend(): Promise<SavedImageData[] | null> {
     return null;
   }
 }
+
 

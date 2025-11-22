@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { extractIPFromFilename, normalizeIP } from '../utils/imageUtils';
 import { loadCameraDataFromExcel, type CameraData } from '../utils/excelUtils';
-import { saveData, loadFromBackend } from '../utils/saveData';
+import { loadFromBackend, saveSingleImage } from '../utils/saveData';
 import LabelingCanvas from './LabelingCanvas';
 import ImageWithLabels from './ImageWithLabels';
 import type { Label } from '../utils/saveData';
@@ -43,6 +43,8 @@ export default function ImageViewer() {
   const [labelingMode, setLabelingMode] = useState<'rectangle' | 'line' | null>(null); // null = disabled
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [navigationInput, setNavigationInput] = useState<string>('1');
+  const [saving, setSaving] = useState<boolean>(false);
+  const [saveStatus, setSaveStatus] = useState<{ message: string; type: 'success' | 'error' | null }>({ message: '', type: null });
 
   // Load Excel data first (non-blocking)
   useEffect(() => {
@@ -166,8 +168,8 @@ export default function ImageViewer() {
     
     setImages(updatedFilteredImages);
     
-    // Auto-save to GCS whenever analytics are changed
-    saveData(updatedImages);
+    // Don't auto-save - user must click save button
+    // This prevents data loss on refresh and race conditions
     
     // Update sidebar selection state
     setSidebarSelectedAnalytics(prev => {
@@ -179,6 +181,40 @@ export default function ImageViewer() {
       }
       return newSet;
     });
+  };
+  
+  // Save current image independently
+  const handleSaveCurrentImage = async () => {
+    const currentImg = images[currentIndex];
+    if (!currentImg) {
+      setSaveStatus({ message: 'No image to save', type: 'error' });
+      return;
+    }
+    
+    setSaving(true);
+    setSaveStatus({ message: 'Saving...', type: null });
+    
+    try {
+      // Find the current image in allImages to get the latest state
+      const imageToSave = allImages.find(img => img.filename === currentImg.filename) || currentImg;
+      
+      const success = await saveSingleImage(imageToSave);
+      
+      if (success) {
+        setSaveStatus({ message: '✅ Saved successfully', type: 'success' });
+        // Clear status after 2 seconds
+        setTimeout(() => setSaveStatus({ message: '', type: null }), 2000);
+      } else {
+        setSaveStatus({ message: '❌ Failed to save', type: 'error' });
+        setTimeout(() => setSaveStatus({ message: '', type: null }), 3000);
+      }
+    } catch (error) {
+      console.error('Error saving image:', error);
+      setSaveStatus({ message: '❌ Error saving', type: 'error' });
+      setTimeout(() => setSaveStatus({ message: '', type: null }), 3000);
+    } finally {
+      setSaving(false);
+    }
   };
   
   
@@ -365,23 +401,32 @@ export default function ImageViewer() {
         <div className="header-navigation" style={{ 
           display: 'flex', 
           alignItems: 'center', 
-          justifyContent: 'space-between',
           gap: '1rem', 
           marginBottom: '0.5rem',
           paddingBottom: '0.5rem',
           borderBottom: '1px solid #444'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <input
-                type="number"
-                min="1"
-                max={images.length}
-                value={navigationInput}
-                onChange={(e) => {
-                  setNavigationInput(e.target.value);
-                }}
-                onBlur={() => {
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input
+              type="number"
+              min="1"
+              max={images.length}
+              value={navigationInput}
+              onChange={(e) => {
+                setNavigationInput(e.target.value);
+              }}
+              onBlur={() => {
+                const value = parseInt(navigationInput);
+                if (!isNaN(value) && value >= 1 && value <= images.length) {
+                  setCurrentIndex(value - 1);
+                } else {
+                  // Reset to current value if invalid
+                  setNavigationInput(String(currentIndex + 1));
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
                   const value = parseInt(navigationInput);
                   if (!isNaN(value) && value >= 1 && value <= images.length) {
                     setCurrentIndex(value - 1);
@@ -389,61 +434,29 @@ export default function ImageViewer() {
                     // Reset to current value if invalid
                     setNavigationInput(String(currentIndex + 1));
                   }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const value = parseInt(navigationInput);
-                    if (!isNaN(value) && value >= 1 && value <= images.length) {
-                      setCurrentIndex(value - 1);
-                    } else {
-                      // Reset to current value if invalid
-                      setNavigationInput(String(currentIndex + 1));
-                    }
-                    (e.target as HTMLInputElement).blur();
-                  }
-                }}
-                style={{
-                  width: '70px',
-                  padding: '0.25rem 0.5rem',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  borderRadius: '4px',
-                  color: '#fff',
-                  fontSize: '0.9rem',
-                  textAlign: 'center',
-                  outline: 'none'
-                }}
-                onFocus={(e) => e.target.select()}
-              />
-              <span style={{ color: '#aaa', fontSize: '0.9rem' }}>/ {images.length}</span>
-            </div>
-            {currentImage?.ip && (
-              <span style={{ color: '#4CAF50', fontSize: '0.9rem', fontWeight: '600' }}>
-                IP: {currentImage.ip}
-              </span>
-            )}
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
+              style={{
+                width: '70px',
+                padding: '0.25rem 0.5rem',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: '4px',
+                color: '#fff',
+                fontSize: '0.9rem',
+                textAlign: 'center',
+                outline: 'none'
+              }}
+              onFocus={(e) => e.target.select()}
+            />
+            <span style={{ color: '#aaa', fontSize: '0.9rem' }}>/ {images.length}</span>
           </div>
-          <button
-            onClick={() => {
-              sessionStorage.removeItem('username');
-              window.location.href = '/';
-            }}
-            style={{
-              padding: '0.5rem 1rem',
-              background: '#f44336',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              fontWeight: '600',
-              whiteSpace: 'nowrap'
-            }}
-            title="Logout"
-          >
-            🚪 Logout
-          </button>
+          {currentImage?.ip && (
+            <span style={{ color: '#4CAF50', fontSize: '0.9rem', fontWeight: '600' }}>
+              IP: {currentImage.ip}
+            </span>
+          )}
         </div>
         
         {currentImage?.cameraData ? (
@@ -597,15 +610,48 @@ export default function ImageViewer() {
                     }
                     return img;
                   }));
-                  saveData(updatedImages);
+                  // Don't auto-save - user must click save button
                   setSidebarSelectedAnalytics(new Set());
                 }
               }}
             >
               Clear Selection
             </button>
+            <button 
+              className="save-btn"
+              onClick={handleSaveCurrentImage}
+              disabled={saving || !currentImage}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                marginTop: '0.5rem',
+                background: saving ? '#666' : '#4CAF50',
+                border: 'none',
+                borderRadius: '4px',
+                color: '#fff',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: saving || !currentImage ? 'not-allowed' : 'pointer',
+                opacity: saving || !currentImage ? 0.6 : 1,
+                transition: 'all 0.2s'
+              }}
+            >
+              {saving ? 'Saving...' : '💾 Save This Image'}
+            </button>
+            {saveStatus.message && (
+              <div style={{ 
+                marginTop: '0.5rem', 
+                padding: '0.5rem',
+                fontSize: '0.8rem',
+                textAlign: 'center',
+                color: saveStatus.type === 'success' ? '#4CAF50' : saveStatus.type === 'error' ? '#f44336' : '#aaa',
+                fontWeight: '500'
+              }}>
+                {saveStatus.message}
+              </div>
+            )}
             <div style={{ fontSize: '0.75rem', color: '#aaa', marginTop: '0.5rem', textAlign: 'center' }}>
-              Auto-saving to file (Downloads folder)
+              Click Save to persist changes
             </div>
           </div>
         </div>
@@ -630,7 +676,7 @@ export default function ImageViewer() {
                 }
                 return img;
               }));
-              saveData(updatedImages);
+              // Don't auto-save - user must click save button
             }}
             mode={labelingMode}
             imageWidth={imageDimensions?.width || 0}

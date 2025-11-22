@@ -24,20 +24,118 @@ if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
+// Merge new data with existing data by filename
+const mergeData = (existingData, newData) => {
+  if (!existingData || !Array.isArray(existingData)) {
+    return Array.isArray(newData) ? newData : [];
+  }
+  
+  if (!newData || !Array.isArray(newData) || newData.length === 0) {
+    return existingData;
+  }
+
+  // Create a map of new data by filename for quick lookup
+  const newDataMap = new Map(newData.map(item => [item.filename, item]));
+  
+  // Update existing data with new data, preserving order
+  const merged = existingData.map(item => {
+    const updated = newDataMap.get(item.filename);
+    if (updated) {
+      // Remove from map so we know which new items are additions
+      newDataMap.delete(item.filename);
+      return updated;
+    }
+    return item;
+  });
+  
+  // Add any new items that weren't in existing data
+  newDataMap.forEach(newItem => {
+    merged.push(newItem);
+  });
+  
+  // Recalculate S.No for all items
+  return merged.map((item, index) => ({
+    ...item,
+    'S.No': index + 1
+  }));
+};
+
 // Save image analytics data
 app.post('/api/save-analytics', async (req, res) => {
   try {
-    const data = req.body;
+    // Handle both old format (array) and new format (object with isPartialUpdate and data)
+    let data = req.body;
+    let isPartialUpdate = false;
+    
+    // Check if body is an object with isPartialUpdate and data properties (new format)
+    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) {
+      if ('isPartialUpdate' in req.body && 'data' in req.body) {
+        isPartialUpdate = req.body.isPartialUpdate === true;
+        data = req.body.data;
+      } else if (Array.isArray(req.body)) {
+        // It's actually an array, not an object
+        data = req.body;
+        isPartialUpdate = data.length < 100; // Heuristic
+      } else {
+        // Try to extract array from object
+        const arrayKey = Object.keys(req.body).find(key => Array.isArray(req.body[key]) && key !== 'isPartialUpdate');
+        if (arrayKey) {
+          data = req.body[arrayKey];
+          isPartialUpdate = req.body.isPartialUpdate === true || data.length < 100;
+        }
+      }
+    } else if (Array.isArray(req.body)) {
+      // Old format - just an array
+      data = req.body;
+      isPartialUpdate = data.length < 100; // Heuristic: < 100 items is likely partial
+    }
+    
+    // Validate input
+    if (!data || !Array.isArray(data)) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Invalid data format. Expected array.' 
+      });
+    }
+    
+    // Prevent saving empty arrays
+    if (data.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Cannot save empty data. Data corruption prevented.' 
+      });
+    }
+    
+    let dataToSave = data;
+    
+    // If partial update, merge with existing data
+    if (isPartialUpdate) {
+      // Load existing data from GCS or local
+      let existingData = await loadFromGCS();
+      if (!existingData) {
+        const filePath = getFallbackPath();
+        if (fs.existsSync(filePath)) {
+          existingData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        }
+      }
+      
+      if (existingData) {
+        dataToSave = mergeData(existingData, data);
+        console.log(`Merging ${data.length} image(s) into existing ${existingData.length} images`);
+      }
+    }
     
     // Try GCS first
-    const gcsSuccess = await saveToGCS(data);
+    const gcsSuccess = await saveToGCS(dataToSave);
     
     if (gcsSuccess) {
       console.log('Saved analytics data to GCS');
       return res.json({ 
         success: true, 
-        message: 'Data saved successfully to GCS',
-        storage: 'GCS'
+        message: isPartialUpdate ? 'Image data merged successfully' : 'Data saved successfully to GCS',
+        storage: 'GCS',
+        merged: isPartialUpdate,
+        imagesUpdated: data.length
       });
     }
     
@@ -48,9 +146,16 @@ app.post('/api/save-analytics', async (req, res) => {
       fs.mkdirSync(dir, { recursive: true });
     }
     
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+    fs.writeFileSync(filePath, JSON.stringify(dataToSave, null, 2), 'utf8');
     console.log(`Saved analytics data to ${filePath} (fallback)`);
-    res.json({ success: true, message: 'Data saved successfully', path: filePath, storage: 'local' });
+    res.json({ 
+      success: true, 
+      message: 'Data saved successfully', 
+      path: filePath, 
+      storage: 'local',
+      merged: isPartialUpdate,
+      imagesUpdated: data.length
+    });
   } catch (error) {
     console.error('Error saving data:', error);
     res.status(500).json({ success: false, error: error.message });
