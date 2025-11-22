@@ -128,36 +128,48 @@ export function loadImageDataFromFile(file: File): Promise<SavedImageData[]> {
   });
 }
 
-// Throttle GCS saves to avoid too many API calls
-let lastFileSaveTime = 0;
-const FILE_SAVE_THROTTLE_MS = 1000; // Save to GCS at most once every 1 second
+// Save queue to batch rapid saves and prevent data loss
+interface QueuedSave {
+  images: ImageInfo[];
+  resolve: (value: boolean) => void;
+  reject: (error: Error) => void;
+}
+
+let saveQueue: QueuedSave[] = [];
+let saveTimeout: ReturnType<typeof setTimeout> | null = null;
+let isSaving = false;
+const SAVE_DEBOUNCE_MS = 500; // Wait 500ms to batch multiple saves
+const MAX_QUEUE_SIZE = 10; // Process immediately if queue gets this large
 
 /**
- * Save single image or multiple images to GCS via backend API
- * @param images - ImageInfo array to save (can be single image or multiple)
- * @param isPartialUpdate - If true, merges with existing data instead of overwriting
+ * Process the save queue - batches all pending saves into one request
  */
-export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = true): Promise<boolean> {
-  // Validate input
-  if (!images || images.length === 0) {
-    console.warn('Cannot save empty images array');
-    return false;
+async function processSaveQueue(): Promise<void> {
+  if (isSaving || saveQueue.length === 0) {
+    return;
   }
-  
-  const now = Date.now();
-  if (now - lastFileSaveTime < FILE_SAVE_THROTTLE_MS && isPartialUpdate) {
-    // For partial updates, allow more frequent saves but still throttle
-    return false; // Skip if too soon since last save
-  }
-  lastFileSaveTime = now;
-  
+
+  isSaving = true;
+  const queueToProcess = [...saveQueue];
+  saveQueue = [];
+  saveTimeout = null;
+
   try {
-    const savedData = convertToSavedFormat(images);
+    // Collect all unique images from queue (by filename, latest version wins)
+    const imageMap = new Map<string, ImageInfo>();
+    for (const queued of queueToProcess) {
+      for (const img of queued.images) {
+        imageMap.set(img.filename, img); // Latest version overwrites
+      }
+    }
+
+    const allImages = Array.from(imageMap.values());
+    console.log(`📦 Processing save queue: ${allImages.length} unique image(s) from ${queueToProcess.length} save request(s)`);
+
+    const savedData = convertToSavedFormat(allImages);
     
-    // Send as array with isPartialUpdate flag in a way backend can understand
-    const payload = isPartialUpdate 
-      ? { isPartialUpdate: true, data: savedData }
-      : savedData;
+    // Send as partial update (always merge with existing data)
+    const payload = { isPartialUpdate: true, data: savedData };
     
     const response = await fetch('/api/save-analytics', {
       method: 'POST',
@@ -166,22 +178,104 @@ export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = 
         'Cache-Control': 'no-cache',
       },
       body: JSON.stringify(payload),
-      cache: 'no-store' // Prevent browser from caching the request
+      cache: 'no-store'
     });
     
     if (response.ok) {
       const result = await response.json();
-      console.log(`✅ Saved ${images.length} image(s) to GCS: ${result.storage || 'GCS'}${result.merged ? ' (merged)' : ''}`);
-      return true;
+      console.log(`✅ Saved ${allImages.length} image(s) to GCS: ${result.storage || 'GCS'}${result.merged ? ' (merged)' : ''}`);
+      
+      // Resolve all queued promises with success
+      queueToProcess.forEach(queued => queued.resolve(true));
     } else {
       const errorData = await response.json().catch(() => ({}));
-      console.error('Failed to save to GCS:', errorData.error || 'Unknown error');
-      return false;
+      const errorMsg = errorData.error || 'Unknown error';
+      console.error('❌ Failed to save to GCS:', errorMsg);
+      
+      // Reject all queued promises
+      const error = new Error(errorMsg);
+      queueToProcess.forEach(queued => queued.reject(error));
     }
   } catch (error) {
-    console.error('Error saving to GCS:', error);
+    console.error('❌ Error saving to GCS:', error);
+    const saveError = error instanceof Error ? error : new Error('Unknown error');
+    queueToProcess.forEach(queued => queued.reject(saveError));
+  } finally {
+    isSaving = false;
+    
+    // Process any new items that were added while we were saving
+    if (saveQueue.length > 0) {
+      saveTimeout = setTimeout(processSaveQueue, SAVE_DEBOUNCE_MS);
+    }
+  }
+}
+
+/**
+ * Save single image or multiple images to GCS via backend API
+ * Uses a queue to batch rapid saves and prevent data loss
+ * @param images - ImageInfo array to save (can be single image or multiple)
+ * @param isPartialUpdate - If true, merges with existing data instead of overwriting
+ */
+export async function saveToGCS(images: ImageInfo[], isPartialUpdate: boolean = true): Promise<boolean> {
+  // Validate input
+  if (!images || images.length === 0) {
+    console.warn('⚠️ Cannot save empty images array');
     return false;
   }
+
+  // For full updates (not partial), save immediately without queue
+  if (!isPartialUpdate) {
+    try {
+      const savedData = convertToSavedFormat(images);
+      const payload = savedData;
+      
+      const response = await fetch('/api/save-analytics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+        body: JSON.stringify(payload),
+        cache: 'no-store'
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log(`✅ Saved ${images.length} image(s) to GCS (full update)`);
+        return true;
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ Failed to save to GCS:', errorData.error || 'Unknown error');
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ Error saving to GCS:', error);
+      return false;
+    }
+  }
+
+  // For partial updates, use queue to batch rapid saves
+  return new Promise<boolean>((resolve, reject) => {
+    saveQueue.push({ images, resolve, reject });
+    
+    // Count total images in queue
+    const totalImagesInQueue = saveQueue.reduce((sum, q) => sum + q.images.length, 0);
+    
+    // Clear existing timeout
+    if (saveTimeout) {
+      clearTimeout(saveTimeout);
+      saveTimeout = null;
+    }
+    
+    // Process immediately if queue is large, otherwise debounce
+    if (totalImagesInQueue >= MAX_QUEUE_SIZE) {
+      console.log(`📦 Queue size (${totalImagesInQueue} images) reached threshold, processing immediately`);
+      processSaveQueue();
+    } else {
+      // Process queue after debounce delay
+      saveTimeout = setTimeout(processSaveQueue, SAVE_DEBOUNCE_MS);
+    }
+  });
 }
 
 /**

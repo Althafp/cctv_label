@@ -195,35 +195,55 @@ export default function ImageViewer() {
     setSaveStatus({ message: 'Saving...', type: null });
     
     try {
-      // Find the current image in allImages to get the latest state
-      const imageToSave = allImages.find(img => img.filename === currentImg.filename) || currentImg;
+      // CRITICAL: Use sidebarSelectedAnalytics as source of truth (always current)
+      // allImages state might be stale due to React's async state updates
+      const imageFromAllImages = allImages.find(img => img.filename === currentImg.filename) || currentImg;
       
-      console.log('Saving image:', imageToSave.filename);
-      console.log('Analytics to save:', Array.from(imageToSave.assignedAnalytics));
-      console.log('Labels to save:', imageToSave.labels?.length || 0);
+      // Build image to save with current sidebar state (most up-to-date)
+      const imageToSave: ImageInfo = {
+        ...imageFromAllImages,
+        assignedAnalytics: new Set(sidebarSelectedAnalytics), // Use current sidebar state
+      };
       
-      const success = await saveSingleImage(imageToSave);
+      console.log('💾 Saving image:', imageToSave.filename);
+      console.log('📊 Analytics to save:', Array.from(imageToSave.assignedAnalytics));
+      console.log('📊 Analytics count:', imageToSave.assignedAnalytics.size);
+      console.log('🏷️ Labels to save:', imageToSave.labels?.length || 0);
       
-      if (success) {
-        setSaveStatus({ message: '✅ Saved successfully', type: 'success' });
-        // Wait a moment, then reload data to verify it was saved
-        setTimeout(async () => {
-          const freshData = await loadFromBackend();
-          if (freshData) {
-            const saved = freshData.find(item => item.filename === imageToSave.filename);
-            if (saved) {
-              const savedAnalytics = ANALYTICS_OPTIONS.filter(opt => saved[opt as keyof typeof saved] === 'yes');
-              console.log('✅ Verified save - Analytics in GCS:', savedAnalytics);
-            } else {
-              console.warn('⚠️ Saved image not found in GCS after save');
+      // Validate we have analytics to save
+      if (imageToSave.assignedAnalytics.size === 0) {
+        console.warn('⚠️ No analytics selected - saving anyway to clear any existing analytics');
+      }
+      
+      try {
+        const success = await saveSingleImage(imageToSave);
+        
+        if (success) {
+          setSaveStatus({ message: '✅ Saved successfully', type: 'success' });
+          // Wait a moment, then reload data to verify it was saved
+          setTimeout(async () => {
+            const freshData = await loadFromBackend();
+            if (freshData) {
+              const saved = freshData.find(item => item.filename === imageToSave.filename);
+              if (saved) {
+                const savedAnalytics = ANALYTICS_OPTIONS.filter(opt => saved[opt as keyof typeof saved] === 'yes');
+                console.log('✅ Verified save - Analytics in GCS:', savedAnalytics);
+              } else {
+                console.warn('⚠️ Saved image not found in GCS after save');
+              }
             }
-          }
-        }, 1000);
-        // Clear status after 3 seconds
-        setTimeout(() => setSaveStatus({ message: '', type: null }), 3000);
-      } else {
-        setSaveStatus({ message: '❌ Failed to save', type: 'error' });
-        setTimeout(() => setSaveStatus({ message: '', type: null }), 3000);
+          }, 1500); // Increased delay to allow queue processing
+          // Clear status after 4 seconds
+          setTimeout(() => setSaveStatus({ message: '', type: null }), 4000);
+        } else {
+          setSaveStatus({ message: '❌ Failed to save - please try again', type: 'error' });
+          setTimeout(() => setSaveStatus({ message: '', type: null }), 5000);
+        }
+      } catch (saveError) {
+        const errorMsg = saveError instanceof Error ? saveError.message : 'Unknown error';
+        console.error('Save error:', saveError);
+        setSaveStatus({ message: `❌ Error: ${errorMsg}`, type: 'error' });
+        setTimeout(() => setSaveStatus({ message: '', type: null }), 5000);
       }
     } catch (error) {
       console.error('Error saving image:', error);
