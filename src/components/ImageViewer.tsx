@@ -365,32 +365,23 @@ export default function ImageViewer() {
         <div className="header-navigation" style={{ 
           display: 'flex', 
           alignItems: 'center', 
+          justifyContent: 'space-between',
           gap: '1rem', 
           marginBottom: '0.5rem',
           paddingBottom: '0.5rem',
           borderBottom: '1px solid #444'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <input
-              type="number"
-              min="1"
-              max={images.length}
-              value={navigationInput}
-              onChange={(e) => {
-                setNavigationInput(e.target.value);
-              }}
-              onBlur={() => {
-                const value = parseInt(navigationInput);
-                if (!isNaN(value) && value >= 1 && value <= images.length) {
-                  setCurrentIndex(value - 1);
-                } else {
-                  // Reset to current value if invalid
-                  setNavigationInput(String(currentIndex + 1));
-                }
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <input
+                type="number"
+                min="1"
+                max={images.length}
+                value={navigationInput}
+                onChange={(e) => {
+                  setNavigationInput(e.target.value);
+                }}
+                onBlur={() => {
                   const value = parseInt(navigationInput);
                   if (!isNaN(value) && value >= 1 && value <= images.length) {
                     setCurrentIndex(value - 1);
@@ -398,29 +389,61 @@ export default function ImageViewer() {
                     // Reset to current value if invalid
                     setNavigationInput(String(currentIndex + 1));
                   }
-                  (e.target as HTMLInputElement).blur();
-                }
-              }}
-              style={{
-                width: '70px',
-                padding: '0.25rem 0.5rem',
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                borderRadius: '4px',
-                color: '#fff',
-                fontSize: '0.9rem',
-                textAlign: 'center',
-                outline: 'none'
-              }}
-              onFocus={(e) => e.target.select()}
-            />
-            <span style={{ color: '#aaa', fontSize: '0.9rem' }}>/ {images.length}</span>
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = parseInt(navigationInput);
+                    if (!isNaN(value) && value >= 1 && value <= images.length) {
+                      setCurrentIndex(value - 1);
+                    } else {
+                      // Reset to current value if invalid
+                      setNavigationInput(String(currentIndex + 1));
+                    }
+                    (e.target as HTMLInputElement).blur();
+                  }
+                }}
+                style={{
+                  width: '70px',
+                  padding: '0.25rem 0.5rem',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  borderRadius: '4px',
+                  color: '#fff',
+                  fontSize: '0.9rem',
+                  textAlign: 'center',
+                  outline: 'none'
+                }}
+                onFocus={(e) => e.target.select()}
+              />
+              <span style={{ color: '#aaa', fontSize: '0.9rem' }}>/ {images.length}</span>
+            </div>
+            {currentImage?.ip && (
+              <span style={{ color: '#4CAF50', fontSize: '0.9rem', fontWeight: '600' }}>
+                IP: {currentImage.ip}
+              </span>
+            )}
           </div>
-          {currentImage?.ip && (
-            <span style={{ color: '#4CAF50', fontSize: '0.9rem', fontWeight: '600' }}>
-              IP: {currentImage.ip}
-            </span>
-          )}
+          <button
+            onClick={() => {
+              sessionStorage.removeItem('username');
+              window.location.href = '/';
+            }}
+            style={{
+              padding: '0.5rem 1rem',
+              background: '#f44336',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '0.85rem',
+              fontWeight: '600',
+              whiteSpace: 'nowrap'
+            }}
+            title="Logout"
+          >
+            🚪 Logout
+          </button>
         </div>
         
         {currentImage?.cameraData ? (
