@@ -28,23 +28,34 @@ const initGCS = () => {
     // Use key file if exists, otherwise try env vars
     if (fs.existsSync(keyFile)) {
       storageConfig.keyFilename = keyFile;
+      console.log('Using GCS key file');
     } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
       // Use JSON from environment variable (for Vercel)
       try {
-        storageConfig.credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+        const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+        storageConfig.credentials = credentials;
+        console.log('Using GOOGLE_APPLICATION_CREDENTIALS_JSON from env');
       } catch (parseError) {
-        console.warn('Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON:', parseError.message);
+        console.error('Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON:', parseError.message);
+        console.error('Env var exists:', !!process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
         return;
       }
     } else {
-      console.warn('GCS key file not found and no env vars, GCS storage disabled');
+      console.error('GCS key file not found and no GOOGLE_APPLICATION_CREDENTIALS_JSON env var');
+      console.error('Current env vars:', Object.keys(process.env).filter(k => k.includes('GOOGLE')));
       return;
     }
     
     storage = new Storage(storageConfig);
     bucket = storage.bucket(BUCKET_NAME);
+    console.log('GCS initialized successfully');
   } catch (error) {
-    console.error('Failed to initialize GCS:', error.message);
+    console.error('Failed to initialize GCS:', error);
+    console.error('Error details:', {
+      message: error?.message,
+      code: error?.code,
+      stack: error?.stack
+    });
     storage = null;
     bucket = null;
   }
@@ -73,7 +84,12 @@ export const saveToGCS = async (data) => {
     console.log(`✅ Saved analytics data to gs://${BUCKET_NAME}/${filePath}`);
     return true;
   } catch (error) {
-    console.error('Error saving to GCS:', error.message);
+    console.error('Error saving to GCS:', error);
+    console.error('Error details:', {
+      message: error?.message,
+      code: error?.code,
+      stack: error?.stack
+    });
     return false;
   }
 };

@@ -1,0 +1,192 @@
+================================================================================
+CHANGES: SAVE BUTTON FOR EACH IMAGE - INDEPENDENT SAVING
+================================================================================
+
+ISSUE FIXED:
+- When user refreshes browser, recently labeled analytics were going back to "no"
+- Multiple users overwriting each other's work
+- Data loss on refresh
+
+SOLUTION IMPLEMENTED:
+1. Removed auto-save on every change
+2. Added "Save This Image" button for each image
+3. Each image saves independently (merges by filename)
+4. Backend now merges data instead of overwriting
+5. Added validation to prevent empty data corruption
+
+================================================================================
+BACKEND CHANGES
+================================================================================
+
+FILE: react-app/api/save-analytics.js
+FILE: react-app/server.js
+
+CHANGES:
+1. Added mergeData() function that merges by filename
+   - Preserves existing data order
+   - Updates only the images being saved
+   - Adds new images if they don't exist
+   - Recalculates S.No after merge
+
+2. Updated save endpoint to handle partial updates
+   - Accepts { isPartialUpdate: true, data: [...] } format
+   - Loads existing data from GCS
+   - Merges new data with existing (by filename)
+   - Prevents empty data saves
+   - Validates input before saving
+
+3. Data corruption prevention
+   - Rejects empty arrays
+   - Validates data format
+   - Only merges when isPartialUpdate=true
+
+================================================================================
+FRONTEND CHANGES
+================================================================================
+
+FILE: react-app/src/components/ImageViewer.tsx
+
+CHANGES:
+1. Removed auto-save calls
+   - toggleAnalyticsAssignment() - no longer auto-saves
+   - Clear Selection - no longer auto-saves
+   - onLabelsChange() - no longer auto-saves
+
+2. Added "Save This Image" button
+   - Located in sidebar footer
+   - Saves only current image
+   - Shows saving status
+   - Disabled while saving
+   - Shows success/error messages
+
+3. Added handleSaveCurrentImage() function
+   - Gets current image from allImages
+   - Calls saveSingleImage()
+   - Updates save status
+   - Handles errors
+
+4. Added state management
+   - saving: boolean for button state
+   - saveStatus: { message, type } for feedback
+
+FILE: react-app/src/utils/saveData.ts
+
+CHANGES:
+1. Updated saveToGCS() function
+   - Now accepts isPartialUpdate parameter
+   - Sends { isPartialUpdate, data } payload
+   - Returns boolean for success/failure
+   - Throttled to 1 second for partial updates
+
+2. Added saveSingleImage() function
+   - Saves single image with merge
+   - Calls saveToGCS([image], true)
+   - Returns Promise<boolean>
+
+3. Updated saveData() function
+   - Now does full save (not partial)
+   - Calls saveToGCS(images, false)
+
+================================================================================
+HOW IT WORKS NOW
+================================================================================
+
+BEFORE (Old Behavior):
+1. User clicks analytics checkbox
+2. Auto-save triggers immediately
+3. Saves ENTIRE allImages array
+4. Overwrites GCS file completely
+5. If refresh happens before save completes → data lost
+6. Multiple users → last save wins, others lose work
+
+AFTER (New Behavior):
+1. User clicks analytics checkbox
+2. Changes saved in local state only
+3. User clicks "Save This Image" button
+4. Only current image is sent to backend
+5. Backend merges by filename with existing data
+6. Other images' data is preserved
+7. Refresh loads merged data → no data loss
+8. Multiple users can work independently
+
+================================================================================
+DATA FLOW
+================================================================================
+
+SAVE SINGLE IMAGE:
+1. User clicks "Save This Image"
+2. Frontend: saveSingleImage(currentImage)
+3. Frontend: convertToSavedFormat([image])
+4. Frontend: POST { isPartialUpdate: true, data: [savedImage] }
+5. Backend: Extract data and isPartialUpdate
+6. Backend: Load existing data from GCS
+7. Backend: mergeData(existing, new) by filename
+8. Backend: Save merged data to GCS
+9. Frontend: Show success/error message
+
+LOAD ON REFRESH:
+1. Page loads
+2. Frontend: loadFromBackend()
+3. Backend: loadFromGCS()
+4. Backend: Returns full merged data
+5. Frontend: Merges with image list by filename
+6. All saved analytics/labels restored
+
+================================================================================
+BENEFITS
+================================================================================
+
+✅ No data loss on refresh
+   - User must explicitly save
+   - Data persists in GCS
+   - Refresh loads saved data
+
+✅ Independent image saving
+   - Each image saves separately
+   - No overwriting other images
+   - Merge by filename
+
+✅ Multiple users can work
+   - Each saves their own image
+   - Merges instead of overwrites
+   - Less conflict (still possible if same image)
+
+✅ Data corruption prevention
+   - Validates before saving
+   - Rejects empty data
+   - Prevents accidental overwrites
+
+✅ User control
+   - Explicit save action
+   - Visual feedback
+   - Know when data is saved
+
+================================================================================
+TESTING CHECKLIST
+================================================================================
+
+1. ✅ Label analytics for an image
+2. ✅ Click "Save This Image"
+3. ✅ See success message
+4. ✅ Refresh browser
+5. ✅ Verify analytics are still there
+6. ✅ Label different image
+7. ✅ Save that image
+8. ✅ Verify both images have their data
+9. ✅ Check GCS file has merged data
+10. ✅ Test with multiple users (if possible)
+
+================================================================================
+DEPLOYMENT
+================================================================================
+
+Ready to deploy:
+- Backend: api/save-analytics.js (Vercel function)
+- Backend: server.js (local dev)
+- Frontend: ImageViewer.tsx
+- Frontend: saveData.ts
+
+No breaking changes - backward compatible with old format.
+
+================================================================================
+

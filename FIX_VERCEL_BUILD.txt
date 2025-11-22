@@ -1,0 +1,30 @@
+VERCEL BUILD ERROR FIX
+=====================
+
+Error: "cd react-app: No such file or directory"
+
+CAUSE: You uploaded react-app contents directly to GitHub root.
+Vercel is trying to cd into react-app subfolder that doesn't exist.
+
+FIX IN VERCEL:
+==============
+
+1. Go to Vercel Project Settings
+2. Click "General" or "Build & Development Settings"
+3. Update these settings:
+
+   Root Directory: (leave EMPTY or set to "/")
+   
+   Build Command: npm install && npm run build
+   
+   Output Directory: dist
+   
+   Install Command: npm install
+
+4. Save settings
+5. Redeploy
+
+The root directory MUST be empty since your files are at repo root, not in a subfolder.
+
+
+

@@ -1,0 +1,98 @@
+================================================================================
+HOW TO SEE VERSION HISTORY IN GCS - STEP BY STEP
+================================================================================
+
+YOU ARE HERE: image_labeling bucket → analytics-data folder
+FILE: image_analytics_data.json (3 MB, Created: Nov 22, 2025)
+
+================================================================================
+METHOD 1: GCS CONSOLE (Visual)
+================================================================================
+
+STEP 1: Click on the file "image_analytics_data.json"
+        (Click the filename itself, not the download icon)
+
+STEP 2: Look for one of these:
+        - "Version history" section on the right side
+        - "Versions" tab at the top
+        - "Generations" tab
+        - Info showing "X noncurrent versions"
+
+STEP 3: If you see a number (like "5 versions" or "1000+ versions"):
+        - Click on it to expand
+        - You'll see list of all versions with timestamps
+        - Click on yesterday's version
+        - Click "Download" to get that version
+
+ALTERNATIVE: Click the 3-dot menu (⋮) next to the file
+             → Select "View version history" or "Show versions"
+
+================================================================================
+METHOD 2: Protection Tab (Check if versioning is enabled)
+================================================================================
+
+STEP 1: Click on "Protection" tab (top of the page, next to "Objects")
+
+STEP 2: Look for "Object versioning" section
+        - If it says "Enabled" → versions exist, go back to file
+        - If it says "Disabled" → NO versions saved, data cannot be recovered
+
+STEP 3: If enabled, go back to Objects tab and click the file
+
+================================================================================
+METHOD 3: Command Line (See ALL versions, even if 1000+)
+================================================================================
+
+IF YOU SEE "1000+ versions" in console, use command line:
+
+1. Open PowerShell or Terminal
+2. Run this command:
+
+   gsutil ls -a gs://image_labeling/analytics-data/image_analytics_data.json
+
+This will show ALL versions with timestamps like:
+   gs://image_labeling/analytics-data/image_analytics_data.json#1234567890
+   gs://image_labeling/analytics-data/image_analytics_data.json#1234567891
+   (The number after # is the generation ID)
+
+3. To download a specific version, use:
+   gsutil cp gs://image_labeling/analytics-data/image_analytics_data.json#1234567890 ./yesterday_backup.json
+
+4. To see versions with dates:
+   gsutil ls -l -a gs://image_labeling/analytics-data/image_analytics_data.json
+
+================================================================================
+WHAT THE "1000+" MESSAGE MEANS
+================================================================================
+
+- GCS Console only shows count up to 1000
+- If you have MORE than 1000 versions, it shows "1000+"
+- You MUST use command line (gsutil) to see all versions
+- This is normal if file is saved very frequently
+
+================================================================================
+QUICK CHECK: Is Versioning Enabled?
+================================================================================
+
+Go to: Protection tab
+Look for: "Object versioning: Enabled" or "Disabled"
+
+IF DISABLED:
+- No version history exists
+- Cannot recover yesterday's data from versions
+- Try soft-deleted objects instead
+
+IF ENABLED:
+- Versions should be available
+- Click on file to see version history
+- Download yesterday's version
+
+================================================================================
+IMMEDIATE ACTION
+================================================================================
+
+1. Click on "image_analytics_data.json" file name
+2. Look for "Version history" or version count
+3. If you see versions, click to expand and find yesterday's
+4. If you see "1000+", use gsutil command above
+

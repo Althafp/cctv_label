@@ -1,0 +1,92 @@
+================================================================================
+FIX FOR VERCEL 500 ERROR - WHAT TO DO
+================================================================================
+
+ISSUE: 500 error when saving images on Vercel
+ERROR: "Failed to save to GCS: Unknown error"
+
+================================================================================
+FIXES APPLIED TO CODE
+================================================================================
+
+1. api/save-analytics.js
+   ✅ Better error handling (fixed error.message issue)
+   ✅ Added detailed console logging
+   ✅ Improved data extraction from req.body
+   ✅ Added validation for Array.isArray check on req.body.data
+   ✅ Better error messages
+
+2. api/gcs-storage.js
+   ✅ Better GCS initialization error handling
+   ✅ More detailed error logging
+   ✅ Check for GOOGLE_APPLICATION_CREDENTIALS_JSON env var
+   ✅ Log which auth method is being used
+
+================================================================================
+WHAT TO DO NOW
+================================================================================
+
+STEP 1: Push the fixes to GitHub
+---------------------------------
+cd "d:\chandu sir\Video_analytics_labeling\react-app"
+git add api/save-analytics.js api/gcs-storage.js
+git commit -m "Fix 500 error in save-analytics, improve error handling and logging"
+git push origin main
+
+STEP 2: Wait for Vercel to auto-deploy
+---------------------------------------
+- Vercel will automatically detect the push
+- Wait for deployment to complete (check Vercel dashboard)
+
+STEP 3: Check Vercel logs if still failing
+--------------------------------------------
+- Go to Vercel dashboard → Your project → Functions tab
+- Click on "api/save-analytics" function
+- Check "Logs" tab
+- Look for the new console.log messages to see where it's failing
+
+STEP 4: Verify environment variable
+------------------------------------
+- Go to Vercel dashboard → Settings → Environment Variables
+- Make sure GOOGLE_APPLICATION_CREDENTIALS_JSON is set
+- Value should be the full JSON content of gcs-key.json
+- Redeploy if you just added/updated it
+
+================================================================================
+COMMON ISSUES TO CHECK
+================================================================================
+
+1. GOOGLE_APPLICATION_CREDENTIALS_JSON not set in Vercel
+   → Add it in Vercel Settings → Environment Variables
+   → Copy entire content of gcs-key.json as the value
+
+2. GCS credentials invalid or expired
+   → Check if service account key is valid
+   → Regenerate key if needed
+
+3. GCS bucket permissions
+   → Service account needs "Storage Object Admin" role
+   → Check IAM permissions in GCP Console
+
+4. Network/firewall issues
+   → Vercel serverless functions should have internet access
+   → Check if GCS API is accessible
+
+================================================================================
+WHAT THE LOGS WILL SHOW
+================================================================================
+
+After deploying, check Vercel logs. You should see:
+- "Received save request, method: POST"
+- "Request body type: object isArray: false"
+- "Using new format: isPartialUpdate=true data length=1"
+- "Loaded existing data: X items"
+- "Attempting to save to GCS, data length: X"
+- "Using GOOGLE_APPLICATION_CREDENTIALS_JSON from env"
+- "GCS initialized successfully"
+- "✅ Saved analytics data to gs://..."
+
+If you see errors, they will now be more detailed.
+
+================================================================================
+

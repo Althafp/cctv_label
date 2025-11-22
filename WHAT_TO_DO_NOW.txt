@@ -1,0 +1,47 @@
+================================================================================
+WHAT TO DO - FIX VERCEL 500 ERROR
+================================================================================
+
+FIXES APPLIED TO CODE:
+✅ api/save-analytics.js - Better error handling, logging, Array.isArray checks
+✅ api/gcs-storage.js - Better GCS initialization error handling
+
+================================================================================
+STEPS TO FIX (Run these commands):
+================================================================================
+
+1. git add api/save-analytics.js api/gcs-storage.js
+
+2. git commit -m "Fix 500 error in save-analytics, improve error handling"
+
+3. git push origin main
+
+4. Wait for Vercel to auto-deploy (check Vercel dashboard)
+
+5. If still failing, check Vercel logs:
+   - Vercel Dashboard → Your Project → Functions → api/save-analytics → Logs
+   - Look for the new console.log messages
+
+================================================================================
+KEY FIXES MADE:
+================================================================================
+
+1. Added Array.isArray(req.body.data) check - prevents crash if data is not array
+2. Better error handling - error?.message instead of error.message
+3. Added detailed console logging to see where it fails
+4. Improved data extraction from req.body
+5. Better GCS initialization error messages
+6. Check for VERCEL env to skip file system fallback
+
+================================================================================
+IF STILL FAILING AFTER DEPLOY:
+================================================================================
+
+Check Vercel Environment Variables:
+- Go to Vercel Settings → Environment Variables
+- Verify GOOGLE_APPLICATION_CREDENTIALS_JSON is set
+- Value should be the full JSON from gcs-key.json
+- Redeploy after adding/updating env var
+
+================================================================================
+

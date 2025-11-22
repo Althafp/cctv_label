@@ -66,46 +66,61 @@ const mergeData = (existingData, newData) => {
 };
 
 const saveData = async (data, isPartialUpdate = false) => {
-  let dataToSave = data;
-  
-  // If partial update, merge with existing data
-  if (isPartialUpdate && Array.isArray(data) && data.length > 0) {
-    // Load existing data
-    if (!dataStore) {
-      dataStore = await loadData();
+  try {
+    let dataToSave = data;
+    
+    // If partial update, merge with existing data
+    if (isPartialUpdate && Array.isArray(data) && data.length > 0) {
+      // Load existing data
+      if (!dataStore) {
+        dataStore = await loadData();
+      }
+      
+      // Merge new data with existing
+      dataToSave = mergeData(dataStore, data);
+      console.log(`Merging ${data.length} image(s) into existing ${dataStore?.length || 0} images`);
     }
     
-    // Merge new data with existing
-    dataToSave = mergeData(dataStore, data);
-    console.log(`Merging ${data.length} image(s) into existing ${dataStore?.length || 0} images`);
-  }
-  
-  // Validate data before saving
-  if (!dataToSave || !Array.isArray(dataToSave) || dataToSave.length === 0) {
-    console.warn('Attempted to save empty or invalid data, skipping');
-    return false;
-  }
-  
-  // Try GCS first
-  const gcsSuccess = await saveToGCS(dataToSave);
-  if (gcsSuccess) {
-    dataStore = dataToSave;
-    return true;
-  }
-
-  // Fallback to file system
-  try {
-    const dataPath = getFallbackPath();
-    const dir = path.dirname(dataPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    // Validate data before saving
+    if (!dataToSave || !Array.isArray(dataToSave) || dataToSave.length === 0) {
+      console.warn('Attempted to save empty or invalid data, skipping');
+      return false;
     }
-    fs.writeFileSync(dataPath, JSON.stringify(dataToSave, null, 2), 'utf8');
-    dataStore = dataToSave;
-    return true;
+    
+    console.log('Attempting to save to GCS, data length:', dataToSave.length);
+    
+    // Try GCS first
+    const gcsSuccess = await saveToGCS(dataToSave);
+    if (gcsSuccess) {
+      dataStore = dataToSave;
+      console.log('Successfully saved to GCS');
+      return true;
+    }
+
+    console.warn('GCS save failed, trying fallback');
+    
+    // Fallback to file system (only works locally, not in Vercel)
+    if (!process.env.VERCEL) {
+      try {
+        const dataPath = getFallbackPath();
+        const dir = path.dirname(dataPath);
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        fs.writeFileSync(dataPath, JSON.stringify(dataToSave, null, 2), 'utf8');
+        dataStore = dataToSave;
+        console.log('Saved to fallback file system');
+        return true;
+      } catch (error) {
+        console.error('Error saving data to file:', error);
+        return false;
+      }
+    }
+    
+    console.error('GCS save failed and no fallback available in Vercel');
+    return false;
   } catch (error) {
-    console.error('Error saving data to file:', error);
-    dataStore = dataToSave;
+    console.error('Error in saveData function:', error);
     return false;
   }
 };
@@ -127,35 +142,54 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('Received save request, method:', req.method);
+    console.log('Request body type:', typeof req.body, 'isArray:', Array.isArray(req.body));
+    
     // Handle both old format (array) and new format (object with isPartialUpdate and data)
     let data = req.body;
     let isPartialUpdate = false;
     
     // Check if body is an object with isPartialUpdate and data properties (new format)
     if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) {
-      if ('isPartialUpdate' in req.body && 'data' in req.body) {
+      if ('isPartialUpdate' in req.body && 'data' in req.body && Array.isArray(req.body.data)) {
         isPartialUpdate = req.body.isPartialUpdate === true;
         data = req.body.data;
+        console.log('Using new format: isPartialUpdate=', isPartialUpdate, 'data length=', data.length);
       } else if (Array.isArray(req.body)) {
         // It's actually an array, not an object
         data = req.body;
         isPartialUpdate = data.length < 100; // Heuristic
       } else {
         // Try to extract array from object
-        const arrayKey = Object.keys(req.body).find(key => Array.isArray(req.body[key]) && key !== 'isPartialUpdate'));
+        const arrayKey = Object.keys(req.body).find(key => Array.isArray(req.body[key]) && key !== 'isPartialUpdate');
         if (arrayKey) {
           data = req.body[arrayKey];
           isPartialUpdate = req.body.isPartialUpdate === true || data.length < 100;
+          console.log('Extracted data from key:', arrayKey, 'length=', data?.length);
+        } else {
+          console.error('Could not find array in request body. Keys:', Object.keys(req.body || {}));
+          return res.status(400).json({ 
+            success: false, 
+            error: 'Invalid data format. Expected array or object with data array.' 
+          });
         }
       }
     } else if (Array.isArray(req.body)) {
       // Old format - just an array
       data = req.body;
       isPartialUpdate = data.length < 100; // Heuristic: < 100 items is likely partial
+      console.log('Using old format (array), length=', data.length);
+    } else {
+      console.error('Invalid request body type:', typeof req.body);
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Invalid request body. Expected array or object.' 
+      });
     }
     
     // Validate input
     if (!data || !Array.isArray(data)) {
+      console.error('Data is not an array:', typeof data);
       return res.status(400).json({ 
         success: false, 
         error: 'Invalid data format. Expected array.' 
@@ -170,9 +204,12 @@ export default async function handler(req, res) {
       });
     }
     
+    console.log('Processing save: isPartialUpdate=', isPartialUpdate, 'data items=', data.length);
+    
     // Load existing data first
     if (!dataStore) {
       dataStore = await loadData();
+      console.log('Loaded existing data:', dataStore?.length || 0, 'items');
     }
     
     const success = await saveData(data, isPartialUpdate);
@@ -194,7 +231,17 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('Error saving analytics:', error);
-    res.status(500).json({ success: false, error: error.message });
+    const errorMessage = error?.message || error?.toString() || 'Unknown error occurred';
+    console.error('Error details:', {
+      message: errorMessage,
+      stack: error?.stack,
+      body: req.body
+    });
+    res.status(500).json({ 
+      success: false, 
+      error: errorMessage,
+      details: process.env.NODE_ENV === 'development' ? error?.stack : undefined
+    });
   }
 }
 

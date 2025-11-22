@@ -1,0 +1,114 @@
+================================================================================
+IMMEDIATE STEPS TO RECOVER YESTERDAY'S DATA - DO THIS NOW
+================================================================================
+
+FILE LOCATION IN GCS:
+Bucket: image_labeling
+Path: analytics-data/image_analytics_data.json
+
+================================================================================
+STEP 1: CHECK GCS VERSIONING (MOST LIKELY TO WORK)
+================================================================================
+
+1. Go to: https://console.cloud.google.com/storage/browser/image_labeling
+2. Click on folder: "analytics-data"
+3. Click on file: "image_analytics_data.json"
+4. Look for "Version History" or "Generations" tab
+5. If versioning is enabled, you'll see previous versions with timestamps
+6. Click on yesterday's version and download it
+
+IF VERSIONING IS NOT ENABLED:
+- You won't see old versions
+- Go to STEP 2
+
+================================================================================
+STEP 2: CHECK SOFT-DELETED OBJECTS
+================================================================================
+
+1. In GCS Console, go to bucket: image_labeling
+2. Click "Show soft-deleted objects" or filter by "Deleted"
+3. Look for: analytics-data/image_analytics_data.json
+4. If found, click "Restore" on yesterday's version
+
+================================================================================
+STEP 3: CHECK VERCEL FUNCTION LOGS
+================================================================================
+
+1. Go to: https://vercel.com/dashboard
+2. Select your project
+3. Go to "Functions" tab
+4. Click on "api/save-analytics" function
+5. Check "Logs" for yesterday
+6. Look for any error messages or data dumps
+
+================================================================================
+STEP 4: CHECK BROWSER DOWNLOADS (IF ANYONE DOWNLOADED JSON)
+================================================================================
+
+Ask all team members to check their Downloads folder for:
+- image_analytics_data.json
+- Any JSON files downloaded yesterday
+
+================================================================================
+WHY DATA WAS LOST - THE CONFLICT ISSUE
+================================================================================
+
+PROBLEM: Multiple people using same login ID
+
+WHAT HAPPENED:
+1. User A loads page → gets data from GCS
+2. User B loads page → gets SAME data from GCS
+3. User A makes changes → saves to GCS
+4. User B makes changes → OVERWRITES User A's changes
+5. User A's work is LOST
+
+THIS IS A RACE CONDITION:
+- Last person to save wins
+- Previous person's work is lost
+- No merge happens, only overwrite
+
+================================================================================
+WHAT TO DO RIGHT NOW TO RECOVER DATA
+================================================================================
+
+OPTION A: GCS Versioning (BEST CHANCE)
+---------------------------------------
+1. Follow STEP 1 above
+2. If versioning enabled → download yesterday's version
+3. Upload it back to GCS to restore
+
+OPTION B: Contact Google Cloud Support
+---------------------------------------
+1. If versioning not enabled
+2. Contact GCP Support immediately
+3. They may have backups (not guaranteed)
+4. Time-sensitive - do this ASAP
+
+OPTION C: Check if anyone has local copy
+-----------------------------------------
+1. Ask all team members
+2. Check their local "data" folders
+3. Check browser downloads
+4. Check if anyone exported/backed up
+
+================================================================================
+PREVENT FUTURE LOSS (After recovery)
+================================================================================
+
+1. ENABLE GCS VERSIONING (Critical!)
+   - Go to bucket settings
+   - Enable "Object Versioning"
+   - This keeps history of all changes
+
+2. FIX LOGIN ISSUE
+   - Each person needs unique login
+   - Or implement user tracking in data
+
+3. ADD BACKUP SYSTEM
+   - Daily automatic backups
+   - Or save to multiple locations
+
+================================================================================
+IMMEDIATE ACTION: Go to GCS Console NOW and check versioning!
+================================================================================
+
