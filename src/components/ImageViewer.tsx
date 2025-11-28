@@ -32,7 +32,12 @@ const ANALYTICS_OPTIONS = [
   'Pot Hole'
 ];
 
-export default function ImageViewer() {
+interface ImageViewerProps {
+  dataset: 'existing' | 'ptz' | 'new_guntur';
+  onBack?: () => void;
+}
+
+export default function ImageViewer({ dataset, onBack }: ImageViewerProps) {
   const [images, setImages] = useState<ImageInfo[]>([]);
   const [allImages, setAllImages] = useState<ImageInfo[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -45,13 +50,17 @@ export default function ImageViewer() {
   const [navigationInput, setNavigationInput] = useState<string>('1');
   const [saving, setSaving] = useState<boolean>(false);
   const [saveStatus, setSaveStatus] = useState<{ message: string; type: 'success' | 'error' | null }>({ message: '', type: null });
+  const [ipSearchQuery, setIpSearchQuery] = useState<string>('');
+  const [ipSearchError, setIpSearchError] = useState<string>('');
 
   // Load Excel data first (non-blocking)
   useEffect(() => {
     async function loadData() {
       try {
         console.log('Loading Excel data...');
-        const dataMap = await loadCameraDataFromExcel('/all_cams.xlsx');
+        // Load appropriate Excel file based on dataset
+        const excelFile = dataset === 'new_guntur' ? '/new_guntur.xlsx' : '/all_cams.xlsx';
+        const dataMap = await loadCameraDataFromExcel(excelFile);
         console.log(`Loaded ${dataMap.size} camera records from Excel`);
         
         // Debug: Show first few IPs from Excel
@@ -71,7 +80,8 @@ export default function ImageViewer() {
     loadData();
   }, []);
 
-  // Always show all images (no filtering)
+  // Keep all images visible - don't filter based on search
+  // Search will only navigate to matching image
   useEffect(() => {
     setImages(allImages);
   }, [allImages]);
@@ -216,13 +226,13 @@ export default function ImageViewer() {
       }
       
       try {
-        const success = await saveSingleImage(imageToSave);
+        const success = await saveSingleImage(imageToSave, dataset);
         
         if (success) {
           setSaveStatus({ message: '✅ Saved successfully', type: 'success' });
           // Wait a moment, then reload data to verify it was saved
           setTimeout(async () => {
-            const freshData = await loadFromBackend();
+            const freshData = await loadFromBackend(dataset);
             if (freshData) {
               const saved = freshData.find(item => item.filename === imageToSave.filename);
               if (saved) {
@@ -262,10 +272,26 @@ export default function ImageViewer() {
       setLoading(true);
       console.log('Loading image manifest...');
       
-      // Load image manifest
-      const manifestResponse = await fetch('/image-manifest.json');
+      // Load image manifest based on dataset
+      const manifestFile = dataset === 'ptz' ? '/image-manifest-ptz.json' : 
+                          dataset === 'new_guntur' ? '/image-manifest-new-guntur.json' : 
+                          '/image-manifest.json';
+      const manifestResponse = await fetch(manifestFile);
       if (!manifestResponse.ok) {
+        if (manifestResponse.status === 404) {
+          throw new Error(`Image manifest not found: ${manifestFile}. Please generate it using: npm run generate-manifest (for new_guntur dataset)`);
+        }
         throw new Error(`Failed to load image manifest: ${manifestResponse.status} ${manifestResponse.statusText}`);
+      }
+      
+      // Check if response is actually JSON (not HTML error page)
+      const contentType = manifestResponse.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await manifestResponse.text();
+        if (text.trim().startsWith('<!')) {
+          throw new Error(`Image manifest not found: ${manifestFile}. The file may not exist. Please generate it first.`);
+        }
+        throw new Error(`Invalid response format. Expected JSON but got: ${contentType}`);
       }
       
       const manifest = await manifestResponse.json();
@@ -288,26 +314,45 @@ export default function ImageViewer() {
         
         let cameraData: CameraData | null = null;
         if (ip) {
-          // Try multiple matching strategies
+          // Normalize extracted IP
           const normalizedIP = normalizeIP(ip);
-          cameraData = cameraDataMap.get(normalizedIP) || 
-                      cameraDataMap.get(ip) || 
-                      cameraDataMap.get(ip.replace(/\./g, '_')) ||
-                      cameraDataMap.get(ip.replace(/_/g, '.')) ||
-                      null;
+          
+          // Try multiple matching strategies
+          const matchAttempts = [
+            normalizedIP,
+            ip,
+            ip.replace(/\./g, '_'),
+            ip.replace(/_/g, '.'),
+            // Try without leading zeros
+            normalizedIP.split(/[._]/).map(oct => String(parseInt(oct, 10))).join('.'),
+          ];
+          
+          for (const attempt of matchAttempts) {
+            const found = cameraDataMap.get(attempt);
+            if (found) {
+              cameraData = found;
+              break;
+            }
+          }
           
           if (cameraData) {
             matchedCount++;
             if (imageList.length < 3) {
-              console.log(`[${imageList.length}] ✓ Matched with Excel data`);
+              console.log(`[${imageList.length}] ✓ Matched IP "${ip}" with Excel data`);
             }
-          } else if (imageList.length < 3) {
-            console.log(`[${imageList.length}] ✗ No match in Excel for IP: ${ip}`);
-          }
-          
-          // Collect sample IPs for debugging
-          if (sampleIPs.length < 5 && !cameraData) {
-            sampleIPs.push(`Extracted: "${ip}" (normalized: "${normalizedIP}")`);
+          } else {
+            // Debug: Show what IPs are available in the map
+            if (imageList.length < 3) {
+              console.log(`[${imageList.length}] ✗ No match for IP: "${ip}" (normalized: "${normalizedIP}")`);
+              // Show first few IPs from map for comparison
+              const sampleMapIPs = Array.from(cameraDataMap.keys()).slice(0, 5);
+              console.log(`  Sample IPs in Excel map:`, sampleMapIPs);
+            }
+            
+            // Collect sample IPs for debugging
+            if (sampleIPs.length < 5) {
+              sampleIPs.push(`Extracted: "${ip}" (normalized: "${normalizedIP}")`);
+            }
           }
         } else if (imageList.length < 3) {
           console.log(`[${imageList.length}] ✗ Could not extract IP from filename`);
@@ -332,8 +377,8 @@ export default function ImageViewer() {
       // Sort by filename
       imageList.sort((a, b) => a.filename.localeCompare(b.filename));
       
-      // Load saved data from GCS
-      const savedData = await loadFromBackend();
+      // Load saved data from GCS (dataset-specific)
+      const savedData = await loadFromBackend(dataset);
       if (savedData && savedData.length > 0) {
         console.log('Loading saved analytics from GCS...');
         // Merge saved analytics with loaded images
@@ -434,7 +479,49 @@ export default function ImageViewer() {
     <div className="image-viewer-container">
       {/* Header with Camera Details */}
       <div className="camera-header">
-        {/* Navigation Input at Top */}
+        {/* Top Bar with Back Button */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '0.5rem',
+          paddingBottom: '0.5rem',
+          borderBottom: '1px solid #444'
+        }}>
+          <div style={{ fontSize: '0.9rem', color: '#aaa' }}>
+            Dataset: {dataset === 'ptz' ? '📹 PTZ' : 
+                     dataset === 'new_guntur' ? '🏙️ New Guntur' : 
+                     '📁 Existing'}
+          </div>
+          {onBack && (
+            <button
+              onClick={onBack}
+              style={{
+                padding: '8px 16px',
+                background: 'rgba(102, 126, 234, 0.8)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                fontSize: '0.9rem',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'rgba(102, 126, 234, 1)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'rgba(102, 126, 234, 0.8)';
+              }}
+            >
+              ← Back to Selection
+            </button>
+          )}
+        </div>
+        {/* Navigation Input */}
         <div className="header-navigation" style={{ 
           display: 'flex', 
           alignItems: 'center', 
@@ -489,6 +576,86 @@ export default function ImageViewer() {
             />
             <span style={{ color: '#aaa', fontSize: '0.9rem' }}>/ {images.length}</span>
           </div>
+          
+          {/* IP Search Input */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ color: '#fff', fontSize: '0.9rem', fontWeight: '500' }}>IP Search:</span>
+            <input
+              type="text"
+              value={ipSearchQuery}
+              onChange={(e) => {
+                setIpSearchQuery(e.target.value);
+                setIpSearchError('');
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  const searchIP = normalizeIP(ipSearchQuery.trim());
+                  
+                  if (searchIP) {
+                    // Find first matching image in the full list
+                    const matchingIndex = allImages.findIndex(img => {
+                      if (!img.ip) return false;
+                      const imgIP = normalizeIP(img.ip);
+                      return imgIP === searchIP || imgIP.includes(searchIP) || searchIP.includes(imgIP);
+                    });
+                    
+                    if (matchingIndex >= 0) {
+                      // Navigate to matching image in full list
+                      setCurrentIndex(matchingIndex);
+                      setIpSearchError('');
+                      // Clear search after navigating (optional - you can remove this if you want to keep the search)
+                      // setIpSearchQuery('');
+                    } else {
+                      setIpSearchError('Invalid IP - No images found');
+                    }
+                  }
+                  
+                  (e.target as HTMLInputElement).blur();
+                } else if (e.key === 'Escape') {
+                  setIpSearchQuery('');
+                  setIpSearchError('');
+                }
+              }}
+              placeholder="Enter IP (e.g., 10.242.0.233)"
+              style={{
+                width: '180px',
+                padding: '0.4rem 0.6rem',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: ipSearchError ? '1px solid #f44336' : '1px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: '4px',
+                color: '#fff',
+                fontSize: '0.9rem',
+                outline: 'none'
+              }}
+              onFocus={(e) => e.target.select()}
+            />
+            {ipSearchError && (
+              <span style={{ color: '#f44336', fontSize: '0.85rem', fontWeight: '500' }}>
+                {ipSearchError}
+              </span>
+            )}
+            {ipSearchQuery && (
+              <button
+                onClick={() => {
+                  setIpSearchQuery('');
+                  setIpSearchError('');
+                }}
+                style={{
+                  padding: '0.25rem 0.5rem',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  borderRadius: '4px',
+                  color: '#fff',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          
           {currentImage?.ip && (
             <span style={{ color: '#4CAF50', fontSize: '0.9rem', fontWeight: '600' }}>
               IP: {currentImage.ip}
@@ -498,42 +665,99 @@ export default function ImageViewer() {
         
         {currentImage?.cameraData ? (
           <div className="header-details">
-            <div className="header-item">
-              <span className="header-label">Old DISTRICT:</span>
-              <span className="header-value">{currentImage.cameraData['Old DISTRICT'] || 'N/A'}</span>
-            </div>
-            <div className="header-item">
-              <span className="header-label">NEW DISTRICT:</span>
-              <span className="header-value">{currentImage.cameraData['NEW DISTRICT'] || 'N/A'}</span>
-            </div>
-            <div className="header-item">
-              <span className="header-label">MANDAL:</span>
-              <span className="header-value">{currentImage.cameraData['MANDAL'] || 'N/A'}</span>
-            </div>
-            <div className="header-item">
-              <span className="header-label">Location Name:</span>
-              <span className="header-value">{currentImage.cameraData['Location Name'] || 'N/A'}</span>
-            </div>
-            <div className="header-item">
-              <span className="header-label">LATITUDE:</span>
-              <span className="header-value">{currentImage.cameraData['LATITUDE'] || 'N/A'}</span>
-            </div>
-            <div className="header-item">
-              <span className="header-label">LONGITUDE:</span>
-              <span className="header-value">{currentImage.cameraData['LONGITUDE'] || 'N/A'}</span>
-            </div>
-            <div className="header-item">
-              <span className="header-label">CAMERA IP:</span>
-              <span className="header-value">{currentImage.cameraData['CAMERA IP'] || 'N/A'}</span>
-            </div>
-            <div className="header-item">
-              <span className="header-label">TYPE OF CAMERA:</span>
-              <span className="header-value">{currentImage.cameraData['TYPE OF CAMERA'] || 'N/A'}</span>
-            </div>
-            <div className="header-item">
-              <span className="header-label">TYPE OF Analytics:</span>
-              <span className="header-value">{currentImage.cameraData['TYPE OF Analytics'] || 'N/A'}</span>
-            </div>
+            {dataset === 'new_guntur' ? (
+              // New Guntur headers
+              <>
+                <div className="header-item">
+                  <span className="header-label">S.No.:</span>
+                  <span className="header-value">{currentImage.cameraData['S.No'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">I.P:</span>
+                  <span className="header-value">{currentImage.cameraData['CAMERA IP'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">POLE NO.:</span>
+                  <span className="header-value">{currentImage.cameraData['POLE NO.'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">REF:</span>
+                  <span className="header-value">{currentImage.cameraData['REF'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">POLICE STATION NAME:</span>
+                  <span className="header-value">{currentImage.cameraData['POLICE STATION NAME'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">LOCATIONNAME:</span>
+                  <span className="header-value">{currentImage.cameraData['Location Name'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">LATITUDE:</span>
+                  <span className="header-value">{currentImage.cameraData['LATITUDE'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">LONGITUDE:</span>
+                  <span className="header-value">{currentImage.cameraData['LONGITUDE'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">Type of Camera:</span>
+                  <span className="header-value">{currentImage.cameraData['TYPE OF CAMERA'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">Analytics Existed/Newly proposed:</span>
+                  <span className="header-value">{currentImage.cameraData['TYPE OF Analytics'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">Additional/New Analytics required:</span>
+                  <span className="header-value">{currentImage.cameraData['Additional/New Analytics required'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">Remarks if any:</span>
+                  <span className="header-value">{currentImage.cameraData['Remarks if any'] || 'N/A'}</span>
+                </div>
+              </>
+            ) : (
+              // Existing/PTZ headers
+              <>
+                <div className="header-item">
+                  <span className="header-label">Old DISTRICT:</span>
+                  <span className="header-value">{currentImage.cameraData['Old DISTRICT'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">NEW DISTRICT:</span>
+                  <span className="header-value">{currentImage.cameraData['NEW DISTRICT'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">MANDAL:</span>
+                  <span className="header-value">{currentImage.cameraData['MANDAL'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">Location Name:</span>
+                  <span className="header-value">{currentImage.cameraData['Location Name'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">LATITUDE:</span>
+                  <span className="header-value">{currentImage.cameraData['LATITUDE'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">LONGITUDE:</span>
+                  <span className="header-value">{currentImage.cameraData['LONGITUDE'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">CAMERA IP:</span>
+                  <span className="header-value">{currentImage.cameraData['CAMERA IP'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">TYPE OF CAMERA:</span>
+                  <span className="header-value">{currentImage.cameraData['TYPE OF CAMERA'] || 'N/A'}</span>
+                </div>
+                <div className="header-item">
+                  <span className="header-label">TYPE OF Analytics:</span>
+                  <span className="header-value">{currentImage.cameraData['TYPE OF Analytics'] || 'N/A'}</span>
+                </div>
+              </>
+            )}
           </div>
         ) : (
           <div className="header-details">

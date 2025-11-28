@@ -21,22 +21,23 @@ const __dirname = path.dirname(__filename);
 
 // Try GCS first, then fallback to file system
 // ALWAYS loads fresh data - no caching
-const loadData = async () => {
+// Returns { data, generation } or null
+const loadData = async (dataset = 'existing') => {
   // ALWAYS try GCS first - get fresh data every time
-  const gcsData = await loadFromGCS();
-  if (gcsData) {
-    console.log(`Loaded fresh data from GCS: ${gcsData.length} items`);
-    return gcsData;
+  const gcsResult = await loadFromGCS(dataset);
+  if (gcsResult && gcsResult.data) {
+    console.log(`Loaded fresh data from GCS: ${gcsResult.data.length} items, generation: ${gcsResult.generation}`);
+    return gcsResult;
   }
 
-  // Fallback to file system
+  // Fallback to file system (no generation tracking for local files)
   try {
-    const dataPath = getFallbackPath();
+    const dataPath = getFallbackPath(dataset);
     if (fs.existsSync(dataPath)) {
       const content = fs.readFileSync(dataPath, 'utf8');
       const data = JSON.parse(content);
       console.log(`Loaded fresh data from file: ${data.length} items`);
-      return data;
+      return { data, generation: null }; // No generation for local files
     }
   } catch (error) {
     console.error('Error loading data from file:', error);
@@ -80,48 +81,69 @@ const mergeData = (existingData, newData) => {
   }));
 };
 
-const saveData = async (data, isPartialUpdate = false) => {
-  try {
-    let dataToSave = data;
-    
-    // If partial update, merge with existing data
-    if (isPartialUpdate && Array.isArray(data) && data.length > 0) {
-      // CRITICAL: ALWAYS load fresh data from GCS before merging
-      // Never use cached data - this prevents data loss from concurrent saves
-      const freshData = await loadData();
+const saveData = async (data, isPartialUpdate = false, dataset = 'existing', maxRetries = 3) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      let dataToSave = data;
+      let expectedGeneration = null;
       
-      if (freshData && Array.isArray(freshData) && freshData.length > 0) {
-        // Merge new data with fresh existing data
-        dataToSave = mergeData(freshData, data);
-        console.log(`✅ Merging ${data.length} image(s) into existing ${freshData.length} images from GCS`);
-      } else {
-        // No existing data, use new data as-is
-        console.log(`ℹ️ No existing data in GCS, saving ${data.length} new image(s)`);
-        dataToSave = data;
+      // If partial update, merge with existing data
+      if (isPartialUpdate && Array.isArray(data) && data.length > 0) {
+        // CRITICAL: ALWAYS load fresh data from GCS before merging
+        // Never use cached data - this prevents data loss from concurrent saves
+        const freshResult = await loadData(dataset);
+        
+        if (freshResult && freshResult.data && Array.isArray(freshResult.data) && freshResult.data.length > 0) {
+          // Merge new data with fresh existing data
+          dataToSave = mergeData(freshResult.data, data);
+          expectedGeneration = freshResult.generation; // Store generation for conflict detection
+          console.log(`✅ Merging ${data.length} image(s) into existing ${freshResult.data.length} images from GCS (attempt ${attempt}/${maxRetries})`);
+        } else {
+          // No existing data, use new data as-is
+          console.log(`ℹ️ No existing data in GCS, saving ${data.length} new image(s)`);
+          dataToSave = data;
+        }
       }
-    }
-    
-    // Validate data before saving
-    if (!dataToSave || !Array.isArray(dataToSave) || dataToSave.length === 0) {
-      console.warn('⚠️ Attempted to save empty or invalid data, skipping');
-      return false;
-    }
-    
-    console.log(`💾 Attempting to save ${dataToSave.length} items to GCS...`);
-    
-    // Try GCS first
-    const gcsSuccess = await saveToGCS(dataToSave);
-    if (gcsSuccess) {
-      console.log(`✅ Successfully saved ${dataToSave.length} items to GCS`);
-      return true;
-    }
+      
+      // Validate data before saving
+      if (!dataToSave || !Array.isArray(dataToSave) || dataToSave.length === 0) {
+        console.warn('⚠️ Attempted to save empty or invalid data, skipping');
+        return false;
+      }
+      
+      console.log(`💾 Attempting to save ${dataToSave.length} items to GCS...`);
+      
+      // Try GCS first with generation check (optimistic locking)
+      const gcsResult = await saveToGCS(dataToSave, dataset, expectedGeneration);
+      
+      // Check if save succeeded
+      if (gcsResult === true) {
+        console.log(`✅ Successfully saved ${dataToSave.length} items to GCS`);
+        return true;
+      }
+      
+      // Check if there was a conflict (concurrent modification)
+      if (gcsResult && gcsResult.conflict) {
+        if (attempt < maxRetries) {
+          console.log(`⚠️ Concurrent modification detected, retrying... (attempt ${attempt + 1}/${maxRetries})`);
+          // Wait a bit before retry (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, 100 * attempt));
+          continue; // Retry the loop
+        } else {
+          console.error('❌ Max retries reached due to concurrent modifications');
+          return false;
+        }
+      }
+      
+      // Other error, don't retry
+      break;
 
     console.warn('⚠️ GCS save failed, trying fallback');
     
     // Fallback to file system (only works locally, not in Vercel)
     if (!process.env.VERCEL) {
       try {
-        const dataPath = getFallbackPath();
+        const dataPath = getFallbackPath(dataset);
         const dir = path.dirname(dataPath);
         if (!fs.existsSync(dir)) {
           fs.mkdirSync(dir, { recursive: true });
@@ -135,13 +157,20 @@ const saveData = async (data, isPartialUpdate = false) => {
       }
     }
     
-    console.error('❌ GCS save failed and no fallback available in Vercel');
-    return false;
-  } catch (error) {
-    console.error('❌ Error in saveData function:', error);
-    console.error('Error stack:', error?.stack);
-    return false;
+      console.error('❌ GCS save failed and no fallback available in Vercel');
+      return false;
+    } catch (error) {
+      console.error(`❌ Error in saveData function (attempt ${attempt}/${maxRetries}):`, error);
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 100 * attempt));
+        continue;
+      }
+      console.error('Error stack:', error?.stack);
+      return false;
+    }
   }
+  
+  return false;
 };
 
 export default async function handler(req, res) {
@@ -159,6 +188,10 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  // Get dataset from query parameter
+  const dataset = req.query?.dataset === 'ptz' ? 'ptz' : 
+                  req.query?.dataset === 'new_guntur' ? 'new_guntur' : 'existing';
 
   try {
     console.log('Received save request, method:', req.method);
@@ -227,7 +260,7 @@ export default async function handler(req, res) {
     
     // Don't cache dataStore - always load fresh in saveData function
     // This prevents race conditions and data loss from concurrent saves
-    const success = await saveData(data, isPartialUpdate);
+    const success = await saveData(data, isPartialUpdate, dataset);
     
     if (success) {
       // Verify save by reloading the saved item(s) from GCS
@@ -236,7 +269,7 @@ export default async function handler(req, res) {
         try {
           const savedFilename = data[0]?.filename;
           if (savedFilename) {
-            const verifyData = await loadData();
+            const verifyData = await loadData(dataset);
             const verified = verifyData?.find(item => item.filename === savedFilename);
             if (verified) {
               const savedAnalytics = ANALYTICS_OPTIONS.filter(opt => verified[opt] === 'yes');

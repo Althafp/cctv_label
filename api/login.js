@@ -29,13 +29,44 @@ export default async function handler(req, res) {
     }
 
     // Load users from public/users.json
-    const usersPath = path.join(__dirname, '../public/users.json');
+    // Try multiple paths for Vercel compatibility
+    const possiblePaths = [
+      path.join(__dirname, '../public/users.json'), // Standard path
+      path.join(__dirname, '../../public/users.json'), // Alternative path
+      path.join(process.cwd(), 'public/users.json'), // Vercel path
+      path.join(process.cwd(), 'dist/public/users.json'), // Build path
+    ];
+
     let users = [];
+    let usersPath = null;
     
-    if (fs.existsSync(usersPath)) {
-      const usersData = fs.readFileSync(usersPath, 'utf8');
-      const parsed = JSON.parse(usersData);
-      users = parsed.users || [];
+    // Try each path until we find the file
+    for (const tryPath of possiblePaths) {
+      if (fs.existsSync(tryPath)) {
+        usersPath = tryPath;
+        try {
+          const usersData = fs.readFileSync(tryPath, 'utf8');
+          const parsed = JSON.parse(usersData);
+          users = parsed.users || [];
+          console.log(`✅ Loaded users from: ${tryPath} (${users.length} users)`);
+          break;
+        } catch (parseError) {
+          console.error(`Failed to parse users.json from ${tryPath}:`, parseError);
+        }
+      }
+    }
+
+    // If still no users, use hardcoded fallback (for emergency access)
+    if (users.length === 0) {
+      console.warn('⚠️ users.json not found, using fallback users');
+      users = [
+        { username: 'MATRIX1', password: 'APCCTV' },
+        { username: 'MATRIX2', password: 'APCCTV' },
+        { username: 'MATRIX3', password: 'APCCTV' },
+        { username: 'VIDEO1', password: 'APCCTV' },
+        { username: 'VIDEO2', password: 'APCCTV' },
+        { username: 'VIDEO3', password: 'APCCTV' },
+      ];
     }
 
     // Check credentials
@@ -50,7 +81,14 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('Error during login:', error);
-    res.status(500).json({ success: false, error: 'Server error' });
+    console.error('Error stack:', error.stack);
+    console.error('Current directory:', process.cwd());
+    console.error('__dirname:', __dirname);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message || 'Server error',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 }
 

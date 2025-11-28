@@ -1,0 +1,657 @@
+{
+  "images": [
+    {
+      "filename": "5TH_MILE__VATTICHERUKURU_10_246_6_126_20251128_092612.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/5TH_MILE__VATTICHERUKURU_10_246_6_126_20251128_092612.jpg",
+      "gcsPath": "new_guntur/5TH_MILE__VATTICHERUKURU_10_246_6_126_20251128_092612.jpg"
+    },
+    {
+      "filename": "5TH_MILE__VATTICHERUKURU_10_246_6_127_20251128_092612.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/5TH_MILE__VATTICHERUKURU_10_246_6_127_20251128_092612.jpg",
+      "gcsPath": "new_guntur/5TH_MILE__VATTICHERUKURU_10_246_6_127_20251128_092612.jpg"
+    },
+    {
+      "filename": "AEMBLY_Z_JUNCTION_10_246_15_186_20251128_092257.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/AEMBLY_Z_JUNCTION_10_246_15_186_20251128_092257.jpg",
+      "gcsPath": "new_guntur/AEMBLY_Z_JUNCTION_10_246_15_186_20251128_092257.jpg"
+    },
+    {
+      "filename": "B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_166_20251128_092606.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_166_20251128_092606.jpg",
+      "gcsPath": "new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_166_20251128_092606.jpg"
+    },
+    {
+      "filename": "B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_167_20251128_092609.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_167_20251128_092609.jpg",
+      "gcsPath": "new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_167_20251128_092609.jpg"
+    },
+    {
+      "filename": "B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_168_20251128_092608.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_168_20251128_092608.jpg",
+      "gcsPath": "new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_168_20251128_092608.jpg"
+    },
+    {
+      "filename": "B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_169_20251128_092608.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_169_20251128_092608.jpg",
+      "gcsPath": "new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_169_20251128_092608.jpg"
+    },
+    {
+      "filename": "B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_170_20251128_092609.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_170_20251128_092609.jpg",
+      "gcsPath": "new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_170_20251128_092609.jpg"
+    },
+    {
+      "filename": "B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_171_20251128_092607.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_171_20251128_092607.jpg",
+      "gcsPath": "new_guntur/B.R._GRADENS__TRAFFIC_JUNCTION__PATTABHIPURAM_10_246_0_171_20251128_092607.jpg"
+    },
+    {
+      "filename": "BHAGATH_SINGH_STATUE_CENTER_TRAFFIC_JN_10_246_0_1_20251128_092546.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/BHAGATH_SINGH_STATUE_CENTER_TRAFFIC_JN_10_246_0_1_20251128_092546.jpg",
+      "gcsPath": "new_guntur/BHAGATH_SINGH_STATUE_CENTER_TRAFFIC_JN_10_246_0_1_20251128_092546.jpg"
+    },
+    {
+      "filename": "CENIMA_HALL_CENTER_THULLURU_10_246_15_210_20251128_092256.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CENIMA_HALL_CENTER_THULLURU_10_246_15_210_20251128_092256.jpg",
+      "gcsPath": "new_guntur/CENIMA_HALL_CENTER_THULLURU_10_246_15_210_20251128_092256.jpg"
+    },
+    {
+      "filename": "CENIMA_HALL_CENTER_THULLURU_10_246_15_211_20251128_092255.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CENIMA_HALL_CENTER_THULLURU_10_246_15_211_20251128_092255.jpg",
+      "gcsPath": "new_guntur/CENIMA_HALL_CENTER_THULLURU_10_246_15_211_20251128_092255.jpg"
+    },
+    {
+      "filename": "CHIGURU_ASHRAMAM_ENTRANCE__KARAKATTA_10_246_4_172_20251128_092530.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHIGURU_ASHRAMAM_ENTRANCE__KARAKATTA_10_246_4_172_20251128_092530.jpg",
+      "gcsPath": "new_guntur/CHIGURU_ASHRAMAM_ENTRANCE__KARAKATTA_10_246_4_172_20251128_092530.jpg"
+    },
+    {
+      "filename": "CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_12_20251128_092455.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_12_20251128_092455.jpg",
+      "gcsPath": "new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_12_20251128_092455.jpg"
+    },
+    {
+      "filename": "CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_13_20251128_092453.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_13_20251128_092453.jpg",
+      "gcsPath": "new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_13_20251128_092453.jpg"
+    },
+    {
+      "filename": "CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_15_20251128_092458.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_15_20251128_092458.jpg",
+      "gcsPath": "new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_15_20251128_092458.jpg"
+    },
+    {
+      "filename": "CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_16_20251128_092455.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_16_20251128_092455.jpg",
+      "gcsPath": "new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_16_20251128_092455.jpg"
+    },
+    {
+      "filename": "CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_17_20251128_092458.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_17_20251128_092458.jpg",
+      "gcsPath": "new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_17_20251128_092458.jpg"
+    },
+    {
+      "filename": "CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_18_20251128_092500.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_18_20251128_092500.jpg",
+      "gcsPath": "new_guntur/CHILLIES_DABHA_JUNCTION__NALLAPADU_10_246_11_18_20251128_092500.jpg"
+    },
+    {
+      "filename": "CHIRALA_BUS_STAND_AREA_10_246_27_6_20251128_092101.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHIRALA_BUS_STAND_AREA_10_246_27_6_20251128_092101.jpg",
+      "gcsPath": "new_guntur/CHIRALA_BUS_STAND_AREA_10_246_27_6_20251128_092101.jpg"
+    },
+    {
+      "filename": "CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_133_20251128_092603.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_133_20251128_092603.jpg",
+      "gcsPath": "new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_133_20251128_092603.jpg"
+    },
+    {
+      "filename": "CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_134_20251128_092605.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_134_20251128_092605.jpg",
+      "gcsPath": "new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_134_20251128_092605.jpg"
+    },
+    {
+      "filename": "CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_135_20251128_092604.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_135_20251128_092604.jpg",
+      "gcsPath": "new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_135_20251128_092604.jpg"
+    },
+    {
+      "filename": "CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_136_20251128_092602.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_136_20251128_092602.jpg",
+      "gcsPath": "new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_136_20251128_092602.jpg"
+    },
+    {
+      "filename": "CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_137_20251128_092603.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_137_20251128_092603.jpg",
+      "gcsPath": "new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_137_20251128_092603.jpg"
+    },
+    {
+      "filename": "CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_138_20251128_092604.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_138_20251128_092604.jpg",
+      "gcsPath": "new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_138_20251128_092604.jpg"
+    },
+    {
+      "filename": "CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_139_20251128_092606.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_139_20251128_092606.jpg",
+      "gcsPath": "new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_139_20251128_092606.jpg"
+    },
+    {
+      "filename": "CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_140_20251128_092605.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_140_20251128_092605.jpg",
+      "gcsPath": "new_guntur/CHUTTUGUNTA__TRAFFIC_JUNCTION_10_246_0_140_20251128_092605.jpg"
+    },
+    {
+      "filename": "COLLECTORATE__NAGARAMPALEM_10_246_10_22_20251128_092448.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/COLLECTORATE__NAGARAMPALEM_10_246_10_22_20251128_092448.jpg",
+      "gcsPath": "new_guntur/COLLECTORATE__NAGARAMPALEM_10_246_10_22_20251128_092448.jpg"
+    },
+    {
+      "filename": "COLLECTORATE__NAGARAMPALEM_10_246_10_26_20251128_092449.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/COLLECTORATE__NAGARAMPALEM_10_246_10_26_20251128_092449.jpg",
+      "gcsPath": "new_guntur/COLLECTORATE__NAGARAMPALEM_10_246_10_26_20251128_092449.jpg"
+    },
+    {
+      "filename": "COLLECTORATE__NAGARAMPALEM_10_246_10_27_20251128_092448.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/COLLECTORATE__NAGARAMPALEM_10_246_10_27_20251128_092448.jpg",
+      "gcsPath": "new_guntur/COLLECTORATE__NAGARAMPALEM_10_246_10_27_20251128_092448.jpg"
+    },
+    {
+      "filename": "COLLECTORATE__NAGARAMPALEM_10_246_10_29_20251128_092451.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/COLLECTORATE__NAGARAMPALEM_10_246_10_29_20251128_092451.jpg",
+      "gcsPath": "new_guntur/COLLECTORATE__NAGARAMPALEM_10_246_10_29_20251128_092451.jpg"
+    },
+    {
+      "filename": "COMPLEX_CENTER_ROAD_(MIDDLE)_AUTO_NAGAR_10_246_13_19_20251128_092522.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/COMPLEX_CENTER_ROAD_(MIDDLE)_AUTO_NAGAR_10_246_13_19_20251128_092522.jpg",
+      "gcsPath": "new_guntur/COMPLEX_CENTER_ROAD_(MIDDLE)_AUTO_NAGAR_10_246_13_19_20251128_092522.jpg"
+    },
+    {
+      "filename": "D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_125_20251128_092559.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_125_20251128_092559.jpg",
+      "gcsPath": "new_guntur/D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_125_20251128_092559.jpg"
+    },
+    {
+      "filename": "D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_126_20251128_092601.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_126_20251128_092601.jpg",
+      "gcsPath": "new_guntur/D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_126_20251128_092601.jpg"
+    },
+    {
+      "filename": "D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_127_20251128_092601.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_127_20251128_092601.jpg",
+      "gcsPath": "new_guntur/D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_127_20251128_092601.jpg"
+    },
+    {
+      "filename": "D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_128_20251128_092559.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_128_20251128_092559.jpg",
+      "gcsPath": "new_guntur/D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_128_20251128_092559.jpg"
+    },
+    {
+      "filename": "D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_129_20251128_092559.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_129_20251128_092559.jpg",
+      "gcsPath": "new_guntur/D.P.O_JUNCTION__NAGARAMPALEM_10_246_0_129_20251128_092559.jpg"
+    },
+    {
+      "filename": "DON_BASCO_SCHOOL_10_246_3_31_20251128_092430.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/DON_BASCO_SCHOOL_10_246_3_31_20251128_092430.jpg",
+      "gcsPath": "new_guntur/DON_BASCO_SCHOOL_10_246_3_31_20251128_092430.jpg"
+    },
+    {
+      "filename": "DPO_MAIN_GATE__NAGARAMPALEM_10_246_10_16_20251128_092446.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/DPO_MAIN_GATE__NAGARAMPALEM_10_246_10_16_20251128_092446.jpg",
+      "gcsPath": "new_guntur/DPO_MAIN_GATE__NAGARAMPALEM_10_246_10_16_20251128_092446.jpg"
+    },
+    {
+      "filename": "ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_15_20251128_092423.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_15_20251128_092423.jpg",
+      "gcsPath": "new_guntur/ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_15_20251128_092423.jpg"
+    },
+    {
+      "filename": "ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_16_20251128_092429.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_16_20251128_092429.jpg",
+      "gcsPath": "new_guntur/ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_16_20251128_092429.jpg"
+    },
+    {
+      "filename": "ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_17_20251128_092415.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_17_20251128_092415.jpg",
+      "gcsPath": "new_guntur/ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_17_20251128_092415.jpg"
+    },
+    {
+      "filename": "ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_18_20251128_092413.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_18_20251128_092413.jpg",
+      "gcsPath": "new_guntur/ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_18_20251128_092413.jpg"
+    },
+    {
+      "filename": "ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_19_20251128_092416.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_19_20251128_092416.jpg",
+      "gcsPath": "new_guntur/ETHU_ROAD_CENTRE_BESIDE_NALLACHERUVU__LALAPET_10_246_8_19_20251128_092416.jpg"
+    },
+    {
+      "filename": "FIVE_LAMP_CENTRE_NEAR_REVENDRAPADU_BRIDGE_10_246_27_83_20251128_092102.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/FIVE_LAMP_CENTRE_NEAR_REVENDRAPADU_BRIDGE_10_246_27_83_20251128_092102.jpg",
+      "gcsPath": "new_guntur/FIVE_LAMP_CENTRE_NEAR_REVENDRAPADU_BRIDGE_10_246_27_83_20251128_092102.jpg"
+    },
+    {
+      "filename": "FRANCE_COMPANY_(KAKTI_PVT.LTD)__KARAKATTA_10_246_4_161_20251128_092527.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/FRANCE_COMPANY_(KAKTI_PVT.LTD)__KARAKATTA_10_246_4_161_20251128_092527.jpg",
+      "gcsPath": "new_guntur/FRANCE_COMPANY_(KAKTI_PVT.LTD)__KARAKATTA_10_246_4_161_20251128_092527.jpg"
+    },
+    {
+      "filename": "GANDHI_CHOWKA__VEGITABLE_MARKET__MANGALAGIRI_10_246_3_20_20251128_092429.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/GANDHI_CHOWKA__VEGITABLE_MARKET__MANGALAGIRI_10_246_3_20_20251128_092429.jpg",
+      "gcsPath": "new_guntur/GANDHI_CHOWKA__VEGITABLE_MARKET__MANGALAGIRI_10_246_3_20_20251128_092429.jpg"
+    },
+    {
+      "filename": "GANDHI_CHOWKA__VEGITABLE_MARKET__MANGALAGIRI_10_246_3_21_20251128_092429.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/GANDHI_CHOWKA__VEGITABLE_MARKET__MANGALAGIRI_10_246_3_21_20251128_092429.jpg",
+      "gcsPath": "new_guntur/GANDHI_CHOWKA__VEGITABLE_MARKET__MANGALAGIRI_10_246_3_21_20251128_092429.jpg"
+    },
+    {
+      "filename": "GGH_HOSPITAL__KOTHAPET_10_246_2_49_20251128_092329.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/GGH_HOSPITAL__KOTHAPET_10_246_2_49_20251128_092329.jpg",
+      "gcsPath": "new_guntur/GGH_HOSPITAL__KOTHAPET_10_246_2_49_20251128_092329.jpg"
+    },
+    {
+      "filename": "HIMANI_CENTER_TRAFFIC_JN__LALAPET_10_246_0_31_20251128_092554.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/HIMANI_CENTER_TRAFFIC_JN__LALAPET_10_246_0_31_20251128_092554.jpg",
+      "gcsPath": "new_guntur/HIMANI_CENTER_TRAFFIC_JN__LALAPET_10_246_0_31_20251128_092554.jpg"
+    },
+    {
+      "filename": "HIMANI_CENTER_TRAFFIC_JN__LALAPET_10_246_0_32_20251128_092602.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/HIMANI_CENTER_TRAFFIC_JN__LALAPET_10_246_0_32_20251128_092602.jpg",
+      "gcsPath": "new_guntur/HIMANI_CENTER_TRAFFIC_JN__LALAPET_10_246_0_32_20251128_092602.jpg"
+    },
+    {
+      "filename": "HIMANI_CENTER_TRAFFIC_JN__LALAPET_10_246_0_33_20251128_092552.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/HIMANI_CENTER_TRAFFIC_JN__LALAPET_10_246_0_33_20251128_092552.jpg",
+      "gcsPath": "new_guntur/HIMANI_CENTER_TRAFFIC_JN__LALAPET_10_246_0_33_20251128_092552.jpg"
+    },
+    {
+      "filename": "KAKANI_SIVALAYAM_TEMPLE_10_246_13_29_20251128_092524.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/KAKANI_SIVALAYAM_TEMPLE_10_246_13_29_20251128_092524.jpg",
+      "gcsPath": "new_guntur/KAKANI_SIVALAYAM_TEMPLE_10_246_13_29_20251128_092524.jpg"
+    },
+    {
+      "filename": "KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_157_20251128_092608.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_157_20251128_092608.jpg",
+      "gcsPath": "new_guntur/KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_157_20251128_092608.jpg"
+    },
+    {
+      "filename": "KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_158_20251128_092608.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_158_20251128_092608.jpg",
+      "gcsPath": "new_guntur/KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_158_20251128_092608.jpg"
+    },
+    {
+      "filename": "KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_159_20251128_092605.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_159_20251128_092605.jpg",
+      "gcsPath": "new_guntur/KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_159_20251128_092605.jpg"
+    },
+    {
+      "filename": "KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_160_20251128_092609.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_160_20251128_092609.jpg",
+      "gcsPath": "new_guntur/KALAMANDHIR_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_160_20251128_092609.jpg"
+    },
+    {
+      "filename": "KANTHERU_VILLAGE_BUS_STAND__TADIKONDA_PS_10_246_4_128_20251128_092546.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/KANTHERU_VILLAGE_BUS_STAND__TADIKONDA_PS_10_246_4_128_20251128_092546.jpg",
+      "gcsPath": "new_guntur/KANTHERU_VILLAGE_BUS_STAND__TADIKONDA_PS_10_246_4_128_20251128_092546.jpg"
+    },
+    {
+      "filename": "KASUKARRU_Y-ROAD_JUNCTION_10_246_27_2_20251128_092059.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/KASUKARRU_Y-ROAD_JUNCTION_10_246_27_2_20251128_092059.jpg",
+      "gcsPath": "new_guntur/KASUKARRU_Y-ROAD_JUNCTION_10_246_27_2_20251128_092059.jpg"
+    },
+    {
+      "filename": "LAM_VILLAGE_JONNALAGADDA_CRO_ROAD__TADIKONDA_PS_10_246_4_129_20251128_092544.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/LAM_VILLAGE_JONNALAGADDA_CRO_ROAD__TADIKONDA_PS_10_246_4_129_20251128_092544.jpg",
+      "gcsPath": "new_guntur/LAM_VILLAGE_JONNALAGADDA_CRO_ROAD__TADIKONDA_PS_10_246_4_129_20251128_092544.jpg"
+    },
+    {
+      "filename": "LASKHMIPURAM__OPP._RELIANCE__ARUNDELPET_10_246_1_42_20251128_092323.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/LASKHMIPURAM__OPP._RELIANCE__ARUNDELPET_10_246_1_42_20251128_092323.jpg",
+      "gcsPath": "new_guntur/LASKHMIPURAM__OPP._RELIANCE__ARUNDELPET_10_246_1_42_20251128_092323.jpg"
+    },
+    {
+      "filename": "LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_145_20251128_092604.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_145_20251128_092604.jpg",
+      "gcsPath": "new_guntur/LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_145_20251128_092604.jpg"
+    },
+    {
+      "filename": "LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_146_20251128_092607.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_146_20251128_092607.jpg",
+      "gcsPath": "new_guntur/LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_146_20251128_092607.jpg"
+    },
+    {
+      "filename": "LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_147_20251128_092606.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_147_20251128_092606.jpg",
+      "gcsPath": "new_guntur/LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_147_20251128_092606.jpg"
+    },
+    {
+      "filename": "LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_149_20251128_092608.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_149_20251128_092608.jpg",
+      "gcsPath": "new_guntur/LODGE_CENTER_TRAFFIC_JUNCTION__ARUNDELPET_10_246_0_149_20251128_092608.jpg"
+    },
+    {
+      "filename": "MALKAPURAM_JUNCTION_10_246_15_208_20251128_092256.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/MALKAPURAM_JUNCTION_10_246_15_208_20251128_092256.jpg",
+      "gcsPath": "new_guntur/MALKAPURAM_JUNCTION_10_246_15_208_20251128_092256.jpg"
+    },
+    {
+      "filename": "MALKAPURAM_JUNCTION_10_246_15_209_20251128_092254.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/MALKAPURAM_JUNCTION_10_246_15_209_20251128_092254.jpg",
+      "gcsPath": "new_guntur/MALKAPURAM_JUNCTION_10_246_15_209_20251128_092254.jpg"
+    },
+    {
+      "filename": "MANIPURAM_FLY_OVER_BRIDGE__OLDGUNTUR_10_246_5_6_20251128_092509.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/MANIPURAM_FLY_OVER_BRIDGE__OLDGUNTUR_10_246_5_6_20251128_092509.jpg",
+      "gcsPath": "new_guntur/MANIPURAM_FLY_OVER_BRIDGE__OLDGUNTUR_10_246_5_6_20251128_092509.jpg"
+    },
+    {
+      "filename": "MANIPURAM_FLY_OVER_BRIDGE__OLDGUNTUR_10_246_5_7_20251128_092516.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/MANIPURAM_FLY_OVER_BRIDGE__OLDGUNTUR_10_246_5_7_20251128_092516.jpg",
+      "gcsPath": "new_guntur/MANIPURAM_FLY_OVER_BRIDGE__OLDGUNTUR_10_246_5_7_20251128_092516.jpg"
+    },
+    {
+      "filename": "MTB_CENTER__TRAFFIC_JUNCTION___GUNTUR_10_246_0_181_20251128_092610.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/MTB_CENTER__TRAFFIC_JUNCTION___GUNTUR_10_246_0_181_20251128_092610.jpg",
+      "gcsPath": "new_guntur/MTB_CENTER__TRAFFIC_JUNCTION___GUNTUR_10_246_0_181_20251128_092610.jpg"
+    },
+    {
+      "filename": "NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_10_20251128_092551.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_10_20251128_092551.jpg",
+      "gcsPath": "new_guntur/NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_10_20251128_092551.jpg"
+    },
+    {
+      "filename": "NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_11_20251128_092550.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_11_20251128_092550.jpg",
+      "gcsPath": "new_guntur/NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_11_20251128_092550.jpg"
+    },
+    {
+      "filename": "NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_6_20251128_092550.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_6_20251128_092550.jpg",
+      "gcsPath": "new_guntur/NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_6_20251128_092550.jpg"
+    },
+    {
+      "filename": "NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_7_20251128_092548.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_7_20251128_092548.jpg",
+      "gcsPath": "new_guntur/NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_7_20251128_092548.jpg"
+    },
+    {
+      "filename": "NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_8_20251128_092550.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_8_20251128_092550.jpg",
+      "gcsPath": "new_guntur/NAAZ_CENTER__TRAFFIC_JN.__KOTHAPET_10_246_0_8_20251128_092550.jpg"
+    },
+    {
+      "filename": "NEAR_HP_PETROL_BUNK__PRATHIPADU_VILLAGE_10_246_6_3_20251128_092524.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NEAR_HP_PETROL_BUNK__PRATHIPADU_VILLAGE_10_246_6_3_20251128_092524.jpg",
+      "gcsPath": "new_guntur/NEAR_HP_PETROL_BUNK__PRATHIPADU_VILLAGE_10_246_6_3_20251128_092524.jpg"
+    },
+    {
+      "filename": "NEAR_POLERAMMA_TEMPLE_10_246_27_10_20251128_092100.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NEAR_POLERAMMA_TEMPLE_10_246_27_10_20251128_092100.jpg",
+      "gcsPath": "new_guntur/NEAR_POLERAMMA_TEMPLE_10_246_27_10_20251128_092100.jpg"
+    },
+    {
+      "filename": "NEAR_SBI_PEDANANDIPADU_10_246_27_192_20251128_092058.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NEAR_SBI_PEDANANDIPADU_10_246_27_192_20251128_092058.jpg",
+      "gcsPath": "new_guntur/NEAR_SBI_PEDANANDIPADU_10_246_27_192_20251128_092058.jpg"
+    },
+    {
+      "filename": "NEW_RTC_BUS_STAND_CENTRE__MANGALAGIRI_10_246_3_11_20251128_092431.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NEW_RTC_BUS_STAND_CENTRE__MANGALAGIRI_10_246_3_11_20251128_092431.jpg",
+      "gcsPath": "new_guntur/NEW_RTC_BUS_STAND_CENTRE__MANGALAGIRI_10_246_3_11_20251128_092431.jpg"
+    },
+    {
+      "filename": "NEW_RTC_BUS_STAND_CENTRE__MANGALAGIRI_10_246_3_12_20251128_092429.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NEW_RTC_BUS_STAND_CENTRE__MANGALAGIRI_10_246_3_12_20251128_092429.jpg",
+      "gcsPath": "new_guntur/NEW_RTC_BUS_STAND_CENTRE__MANGALAGIRI_10_246_3_12_20251128_092429.jpg"
+    },
+    {
+      "filename": "NRI_HOSPITAL_JUNCTION__MANGALAGIRI_10_246_3_7_20251128_092427.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NRI_HOSPITAL_JUNCTION__MANGALAGIRI_10_246_3_7_20251128_092427.jpg",
+      "gcsPath": "new_guntur/NRI_HOSPITAL_JUNCTION__MANGALAGIRI_10_246_3_7_20251128_092427.jpg"
+    },
+    {
+      "filename": "NRI_HOSPITAL_JUNCTION__MANGALAGIRI_10_246_3_8_20251128_092429.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NRI_HOSPITAL_JUNCTION__MANGALAGIRI_10_246_3_8_20251128_092429.jpg",
+      "gcsPath": "new_guntur/NRI_HOSPITAL_JUNCTION__MANGALAGIRI_10_246_3_8_20251128_092429.jpg"
+    },
+    {
+      "filename": "NTR_MUNICIPAL_STADIUM__PATTABHIPURAM__GUNTUR_10_246_12_33_20251128_092513.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/NTR_MUNICIPAL_STADIUM__PATTABHIPURAM__GUNTUR_10_246_12_33_20251128_092513.jpg",
+      "gcsPath": "new_guntur/NTR_MUNICIPAL_STADIUM__PATTABHIPURAM__GUNTUR_10_246_12_33_20251128_092513.jpg"
+    },
+    {
+      "filename": "OLD_RTO_OFFICE__SYAMALA_NAGAR_ROAD____PATTABHIPURAM_10_246_12_14_20251128_092512.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/OLD_RTO_OFFICE__SYAMALA_NAGAR_ROAD____PATTABHIPURAM_10_246_12_14_20251128_092512.jpg",
+      "gcsPath": "new_guntur/OLD_RTO_OFFICE__SYAMALA_NAGAR_ROAD____PATTABHIPURAM_10_246_12_14_20251128_092512.jpg"
+    },
+    {
+      "filename": "OLD_RTO_OFFICE__SYAMALA_NAGAR_ROAD____PATTABHIPURAM_10_246_12_15_20251128_092511.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/OLD_RTO_OFFICE__SYAMALA_NAGAR_ROAD____PATTABHIPURAM_10_246_12_15_20251128_092511.jpg",
+      "gcsPath": "new_guntur/OLD_RTO_OFFICE__SYAMALA_NAGAR_ROAD____PATTABHIPURAM_10_246_12_15_20251128_092511.jpg"
+    },
+    {
+      "filename": "ON_PEDDARAVURU_ROUTE__MAIN_ROAD_10_246_24_42_20251128_092115.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/ON_PEDDARAVURU_ROUTE__MAIN_ROAD_10_246_24_42_20251128_092115.jpg",
+      "gcsPath": "new_guntur/ON_PEDDARAVURU_ROUTE__MAIN_ROAD_10_246_24_42_20251128_092115.jpg"
+    },
+    {
+      "filename": "ON_PEDDARAVURU_ROUTE__MAIN_ROAD_10_246_24_44_20251128_092120.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/ON_PEDDARAVURU_ROUTE__MAIN_ROAD_10_246_24_44_20251128_092120.jpg",
+      "gcsPath": "new_guntur/ON_PEDDARAVURU_ROUTE__MAIN_ROAD_10_246_24_44_20251128_092120.jpg"
+    },
+    {
+      "filename": "ON_PEDDARAVURU_ROUTE__MAIN_ROAD_10_246_24_45_20251128_092122.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/ON_PEDDARAVURU_ROUTE__MAIN_ROAD_10_246_24_45_20251128_092122.jpg",
+      "gcsPath": "new_guntur/ON_PEDDARAVURU_ROUTE__MAIN_ROAD_10_246_24_45_20251128_092122.jpg"
+    },
+    {
+      "filename": "OPP_MUNICIPAL_OFFICE_TOWARDS_RTC_BUS_DEPOT._10_246_27_18_20251128_092103.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/OPP_MUNICIPAL_OFFICE_TOWARDS_RTC_BUS_DEPOT._10_246_27_18_20251128_092103.jpg",
+      "gcsPath": "new_guntur/OPP_MUNICIPAL_OFFICE_TOWARDS_RTC_BUS_DEPOT._10_246_27_18_20251128_092103.jpg"
+    },
+    {
+      "filename": "OPP_MUNICIPAL_OFFICE_TOWARDS_RTC_BUS_DEPOT._10_246_27_19_20251128_092102.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/OPP_MUNICIPAL_OFFICE_TOWARDS_RTC_BUS_DEPOT._10_246_27_19_20251128_092102.jpg",
+      "gcsPath": "new_guntur/OPP_MUNICIPAL_OFFICE_TOWARDS_RTC_BUS_DEPOT._10_246_27_19_20251128_092102.jpg"
+    },
+    {
+      "filename": "OPP_RAILWAY_STATION_PONNUR_10_246_27_27_20251128_092059.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/OPP_RAILWAY_STATION_PONNUR_10_246_27_27_20251128_092059.jpg",
+      "gcsPath": "new_guntur/OPP_RAILWAY_STATION_PONNUR_10_246_27_27_20251128_092059.jpg"
+    },
+    {
+      "filename": "PEDAKAKANI_Y-JUNCTION_10_246_13_4_20251128_092518.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/PEDAKAKANI_Y-JUNCTION_10_246_13_4_20251128_092518.jpg",
+      "gcsPath": "new_guntur/PEDAKAKANI_Y-JUNCTION_10_246_13_4_20251128_092518.jpg"
+    },
+    {
+      "filename": "PEDARAVURU_10_246_24_79_20251128_092247.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/PEDARAVURU_10_246_24_79_20251128_092247.jpg",
+      "gcsPath": "new_guntur/PEDARAVURU_10_246_24_79_20251128_092247.jpg"
+    },
+    {
+      "filename": "PERECHERLA_FLY_OVER_BRIDGE_TOWORDS_NARASARAO_PET__MEDIKONDURU_PS_10_246_9_4_20251128_092501.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/PERECHERLA_FLY_OVER_BRIDGE_TOWORDS_NARASARAO_PET__MEDIKONDURU_PS_10_246_9_4_20251128_092501.jpg",
+      "gcsPath": "new_guntur/PERECHERLA_FLY_OVER_BRIDGE_TOWORDS_NARASARAO_PET__MEDIKONDURU_PS_10_246_9_4_20251128_092501.jpg"
+    },
+    {
+      "filename": "PN_PADU_EXIT_10_246_27_190_20251128_092101.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/PN_PADU_EXIT_10_246_27_190_20251128_092101.jpg",
+      "gcsPath": "new_guntur/PN_PADU_EXIT_10_246_27_190_20251128_092101.jpg"
+    },
+    {
+      "filename": "PN_PADU_EXIT_10_246_27_191_20251128_092107.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/PN_PADU_EXIT_10_246_27_191_20251128_092107.jpg",
+      "gcsPath": "new_guntur/PN_PADU_EXIT_10_246_27_191_20251128_092107.jpg"
+    },
+    {
+      "filename": "PONNURU_TO_CHERUKUPALLI_ROAD_10_246_27_11_20251128_092100.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/PONNURU_TO_CHERUKUPALLI_ROAD_10_246_27_11_20251128_092100.jpg",
+      "gcsPath": "new_guntur/PONNURU_TO_CHERUKUPALLI_ROAD_10_246_27_11_20251128_092100.jpg"
+    },
+    {
+      "filename": "PONNURU_TO_CHERUKUPALLI_ROAD_10_246_27_12_20251128_092101.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/PONNURU_TO_CHERUKUPALLI_ROAD_10_246_27_12_20251128_092101.jpg",
+      "gcsPath": "new_guntur/PONNURU_TO_CHERUKUPALLI_ROAD_10_246_27_12_20251128_092101.jpg"
+    },
+    {
+      "filename": "PULLADIGUNTA_CENTER__VATTICHERUKURU_PS_10_246_6_130_20251128_092613.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/PULLADIGUNTA_CENTER__VATTICHERUKURU_PS_10_246_6_130_20251128_092613.jpg",
+      "gcsPath": "new_guntur/PULLADIGUNTA_CENTER__VATTICHERUKURU_PS_10_246_6_130_20251128_092613.jpg"
+    },
+    {
+      "filename": "PULLADIGUNTA_CENTER__VATTICHERUKURU_PS_10_246_6_131_20251128_092616.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/PULLADIGUNTA_CENTER__VATTICHERUKURU_PS_10_246_6_131_20251128_092616.jpg",
+      "gcsPath": "new_guntur/PULLADIGUNTA_CENTER__VATTICHERUKURU_PS_10_246_6_131_20251128_092616.jpg"
+    },
+    {
+      "filename": "R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_16_20251128_092557.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_16_20251128_092557.jpg",
+      "gcsPath": "new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_16_20251128_092557.jpg"
+    },
+    {
+      "filename": "R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_18_20251128_092601.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_18_20251128_092601.jpg",
+      "gcsPath": "new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_18_20251128_092601.jpg"
+    },
+    {
+      "filename": "R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_19_20251128_092604.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_19_20251128_092604.jpg",
+      "gcsPath": "new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_19_20251128_092604.jpg"
+    },
+    {
+      "filename": "R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_20_20251128_092559.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_20_20251128_092559.jpg",
+      "gcsPath": "new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_20_20251128_092559.jpg"
+    },
+    {
+      "filename": "R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_21_20251128_092556.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_21_20251128_092556.jpg",
+      "gcsPath": "new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_21_20251128_092556.jpg"
+    },
+    {
+      "filename": "R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_23_20251128_092604.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_23_20251128_092604.jpg",
+      "gcsPath": "new_guntur/R.K.T_CENTER__TRAFFIC_JN.__LALAPET_10_246_0_23_20251128_092604.jpg"
+    },
+    {
+      "filename": "RAIL_GATE_CENTER__TADEPALLI_10_246_4_154_20251128_092534.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/RAIL_GATE_CENTER__TADEPALLI_10_246_4_154_20251128_092534.jpg",
+      "gcsPath": "new_guntur/RAIL_GATE_CENTER__TADEPALLI_10_246_4_154_20251128_092534.jpg"
+    },
+    {
+      "filename": "SAI_BABA_TEMPLE__3RD_LANE__VIDYANAGAR__GUNTUR_TOWN._10_246_12_35_20251128_092507.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/SAI_BABA_TEMPLE__3RD_LANE__VIDYANAGAR__GUNTUR_TOWN._10_246_12_35_20251128_092507.jpg",
+      "gcsPath": "new_guntur/SAI_BABA_TEMPLE__3RD_LANE__VIDYANAGAR__GUNTUR_TOWN._10_246_12_35_20251128_092507.jpg"
+    },
+    {
+      "filename": "SANGAMJAGARLAMUDI_VILLAGE_CENTRE_10_246_24_80_20251128_092249.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/SANGAMJAGARLAMUDI_VILLAGE_CENTRE_10_246_24_80_20251128_092249.jpg",
+      "gcsPath": "new_guntur/SANGAMJAGARLAMUDI_VILLAGE_CENTRE_10_246_24_80_20251128_092249.jpg"
+    },
+    {
+      "filename": "SECRETARIATE_GATE_1_TOWARDS_SOUTH_AND_NORTH_SIDE_10_246_15_191_20251128_092252.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/SECRETARIATE_GATE_1_TOWARDS_SOUTH_AND_NORTH_SIDE_10_246_15_191_20251128_092252.jpg",
+      "gcsPath": "new_guntur/SECRETARIATE_GATE_1_TOWARDS_SOUTH_AND_NORTH_SIDE_10_246_15_191_20251128_092252.jpg"
+    },
+    {
+      "filename": "SECRETARIATE_GATE_1_TOWARDS_SOUTH_AND_NORTH_SIDE_10_246_15_192_20251128_092253.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/SECRETARIATE_GATE_1_TOWARDS_SOUTH_AND_NORTH_SIDE_10_246_15_192_20251128_092253.jpg",
+      "gcsPath": "new_guntur/SECRETARIATE_GATE_1_TOWARDS_SOUTH_AND_NORTH_SIDE_10_246_15_192_20251128_092253.jpg"
+    },
+    {
+      "filename": "SECRETARIATE_GATE_2_TOWARDS_NORTH_10_246_15_203_20251128_092304.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/SECRETARIATE_GATE_2_TOWARDS_NORTH_10_246_15_203_20251128_092304.jpg",
+      "gcsPath": "new_guntur/SECRETARIATE_GATE_2_TOWARDS_NORTH_10_246_15_203_20251128_092304.jpg"
+    },
+    {
+      "filename": "SECRETARIATE_GATE_2_TOWARDS_SOUTH_10_246_15_202_20251128_092306.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/SECRETARIATE_GATE_2_TOWARDS_SOUTH_10_246_15_202_20251128_092306.jpg",
+      "gcsPath": "new_guntur/SECRETARIATE_GATE_2_TOWARDS_SOUTH_10_246_15_202_20251128_092306.jpg"
+    },
+    {
+      "filename": "STATE_POLICE_HEADQUARTERS_MAIN_GATE___MANGALAGIRI_RURAL_10_246_3_33_20251128_092433.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/STATE_POLICE_HEADQUARTERS_MAIN_GATE___MANGALAGIRI_RURAL_10_246_3_33_20251128_092433.jpg",
+      "gcsPath": "new_guntur/STATE_POLICE_HEADQUARTERS_MAIN_GATE___MANGALAGIRI_RURAL_10_246_3_33_20251128_092433.jpg"
+    },
+    {
+      "filename": "STATE_POLICE_HEADQUARTERS_MAIN_GATE___MANGALAGIRI_RURAL_10_246_3_34_20251128_092431.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/STATE_POLICE_HEADQUARTERS_MAIN_GATE___MANGALAGIRI_RURAL_10_246_3_34_20251128_092431.jpg",
+      "gcsPath": "new_guntur/STATE_POLICE_HEADQUARTERS_MAIN_GATE___MANGALAGIRI_RURAL_10_246_3_34_20251128_092431.jpg"
+    },
+    {
+      "filename": "TADIKONDA_CRO_ROAD_10_246_4_123_20251128_092544.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/TADIKONDA_CRO_ROAD_10_246_4_123_20251128_092544.jpg",
+      "gcsPath": "new_guntur/TADIKONDA_CRO_ROAD_10_246_4_123_20251128_092544.jpg"
+    },
+    {
+      "filename": "TADIKONDA_CRO_ROAD_10_246_4_124_20251128_092542.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/TADIKONDA_CRO_ROAD_10_246_4_124_20251128_092542.jpg",
+      "gcsPath": "new_guntur/TADIKONDA_CRO_ROAD_10_246_4_124_20251128_092542.jpg"
+    },
+    {
+      "filename": "TADIKONDA_CRO_ROAD_10_246_4_125_20251128_092542.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/TADIKONDA_CRO_ROAD_10_246_4_125_20251128_092542.jpg",
+      "gcsPath": "new_guntur/TADIKONDA_CRO_ROAD_10_246_4_125_20251128_092542.jpg"
+    },
+    {
+      "filename": "TADIKONDA_CRO_ROAD_10_246_4_126_20251128_092542.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/TADIKONDA_CRO_ROAD_10_246_4_126_20251128_092542.jpg",
+      "gcsPath": "new_guntur/TADIKONDA_CRO_ROAD_10_246_4_126_20251128_092542.jpg"
+    },
+    {
+      "filename": "TADIKONDA_VILLAGE_PEDA_PARIMI_ROAD_10_246_4_130_20251128_092544.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/TADIKONDA_VILLAGE_PEDA_PARIMI_ROAD_10_246_4_130_20251128_092544.jpg",
+      "gcsPath": "new_guntur/TADIKONDA_VILLAGE_PEDA_PARIMI_ROAD_10_246_4_130_20251128_092544.jpg"
+    },
+    {
+      "filename": "TAKKELLAPADU_X_ROADS__PEDAKAKANI_PS_10_246_13_10_20251128_092516.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/TAKKELLAPADU_X_ROADS__PEDAKAKANI_PS_10_246_13_10_20251128_092516.jpg",
+      "gcsPath": "new_guntur/TAKKELLAPADU_X_ROADS__PEDAKAKANI_PS_10_246_13_10_20251128_092516.jpg"
+    },
+    {
+      "filename": "TAKKELLAPDU_UNDER_BRIDGE_TOWARDS_MANASASAROVARAM__PEDAKAKANI_PS_10_246_13_17_20251128_092522.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/TAKKELLAPDU_UNDER_BRIDGE_TOWARDS_MANASASAROVARAM__PEDAKAKANI_PS_10_246_13_17_20251128_092522.jpg",
+      "gcsPath": "new_guntur/TAKKELLAPDU_UNDER_BRIDGE_TOWARDS_MANASASAROVARAM__PEDAKAKANI_PS_10_246_13_17_20251128_092522.jpg"
+    },
+    {
+      "filename": "TAKKELLAPDU_UNDER_BRIDGE_TOWARDS_MANASASAROVARAM__PEDAKAKANI_PS_10_246_13_18_20251128_092520.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/TAKKELLAPDU_UNDER_BRIDGE_TOWARDS_MANASASAROVARAM__PEDAKAKANI_PS_10_246_13_18_20251128_092520.jpg",
+      "gcsPath": "new_guntur/TAKKELLAPDU_UNDER_BRIDGE_TOWARDS_MANASASAROVARAM__PEDAKAKANI_PS_10_246_13_18_20251128_092520.jpg"
+    },
+    {
+      "filename": "TB_SANITOURIUM__MANGALAGIRI_10_246_3_2_20251128_092428.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/TB_SANITOURIUM__MANGALAGIRI_10_246_3_2_20251128_092428.jpg",
+      "gcsPath": "new_guntur/TB_SANITOURIUM__MANGALAGIRI_10_246_3_2_20251128_092428.jpg"
+    },
+    {
+      "filename": "TB_SANITOURIUM__MANGALAGIRI_10_246_3_3_20251128_092427.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/TB_SANITOURIUM__MANGALAGIRI_10_246_3_3_20251128_092427.jpg",
+      "gcsPath": "new_guntur/TB_SANITOURIUM__MANGALAGIRI_10_246_3_3_20251128_092427.jpg"
+    },
+    {
+      "filename": "VENKATAPALEM_CHECK_POST_(TOWARDS_THULLURU_SIDE_)_10_246_15_182_20251128_092251.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/VENKATAPALEM_CHECK_POST_(TOWARDS_THULLURU_SIDE_)_10_246_15_182_20251128_092251.jpg",
+      "gcsPath": "new_guntur/VENKATAPALEM_CHECK_POST_(TOWARDS_THULLURU_SIDE_)_10_246_15_182_20251128_092251.jpg"
+    },
+    {
+      "filename": "VENKATAPALEM_CHECK_POST_(TOWARDS_THULLURU_SIDE_)_10_246_15_183_20251128_092254.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/VENKATAPALEM_CHECK_POST_(TOWARDS_THULLURU_SIDE_)_10_246_15_183_20251128_092254.jpg",
+      "gcsPath": "new_guntur/VENKATAPALEM_CHECK_POST_(TOWARDS_THULLURU_SIDE_)_10_246_15_183_20251128_092254.jpg"
+    },
+    {
+      "filename": "VIGNAN_UNIVERSITY__CHEBROLE_PS_10_246_7_7_20251128_092328.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/VIGNAN_UNIVERSITY__CHEBROLE_PS_10_246_7_7_20251128_092328.jpg",
+      "gcsPath": "new_guntur/VIGNAN_UNIVERSITY__CHEBROLE_PS_10_246_7_7_20251128_092328.jpg"
+    },
+    {
+      "filename": "VINJANAMPADU_ADDA_ROAD__VATTICHERUKURU_PS_10_246_6_125_20251128_092614.jpg",
+      "path": "https://storage.googleapis.com/image_labeling/new_guntur/VINJANAMPADU_ADDA_ROAD__VATTICHERUKURU_PS_10_246_6_125_20251128_092614.jpg",
+      "gcsPath": "new_guntur/VINJANAMPADU_ADDA_ROAD__VATTICHERUKURU_PS_10_246_6_125_20251128_092614.jpg"
+    }
+  ],
+  "gcsBaseUrl": "https://storage.googleapis.com/image_labeling/new_guntur",
+  "totalImages": 130,
+  "generatedAt": "2025-11-28T04:34:20.384Z"
+}
