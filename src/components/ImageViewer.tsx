@@ -59,7 +59,7 @@ export default function ImageViewer({ dataset, onBack }: ImageViewerProps) {
       try {
         console.log('Loading Excel data...');
         // Load appropriate Excel file based on dataset
-        const excelFile = dataset === 'new_guntur' ? '/new_guntur.xlsx' : '/all_cams.xlsx';
+        const excelFile = dataset === 'new_guntur' ? '/guntur_new.xlsx' : '/all_cams.xlsx';
         const dataMap = await loadCameraDataFromExcel(excelFile);
         console.log(`Loaded ${dataMap.size} camera records from Excel`);
         

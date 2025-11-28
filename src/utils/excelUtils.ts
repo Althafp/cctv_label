@@ -26,16 +26,20 @@ export interface CameraData {
 function normalizeExcelRow(row: any): CameraData {
   // Check if it's new_guntur format - look for key indicators
   const rowKeys = Object.keys(row);
-  const hasIPColumn = rowKeys.some(key => 
-    key.trim().toUpperCase() === 'I.P' || 
-    key.trim().toUpperCase() === 'I.P.' ||
-    key.trim() === 'I.P' ||
-    key.trim() === 'I.P.'
-  );
-  const hasLocationName = rowKeys.some(key => 
-    key.trim().toUpperCase() === 'LOCATIONNAME' ||
-    key.trim() === 'LOCATIONNAME'
-  );
+  const hasIPColumn = rowKeys.some(key => {
+    const normalizedKey = key.trim().toUpperCase();
+    return normalizedKey === 'I.P' || 
+           normalizedKey === 'I.P.' ||
+           normalizedKey === 'IP' ||
+           key.trim() === 'I.P' ||
+           key.trim() === 'I.P.';
+  });
+  const hasLocationName = rowKeys.some(key => {
+    const normalizedKey = key.trim().toUpperCase();
+    return normalizedKey === 'LOCATIONNAME' ||
+           normalizedKey === 'LOCATION NAME' ||
+           key.trim() === 'LOCATIONNAME';
+  });
   const isNewGunturFormat = hasIPColumn || hasLocationName;
   
   // Helper to get value by trying multiple key variations
@@ -50,22 +54,23 @@ function normalizeExcelRow(row: any): CameraData {
   
   if (isNewGunturFormat) {
     // Map new_guntur format to standard format
-    const ipValue = getValue(['I.P', 'I.P.', 'CAMERA IP'], '');
+    // Try multiple variations of I.P column name
+    const ipValue = getValue(['I.P', 'I.P.', 'IP', 'CAMERA IP', 'I P'], '');
     
     return {
       'S.No': getValue(['S.No.', 'S.No', 'S.No']),
       'Old DISTRICT': getValue(['Old DISTRICT'], ''),
       'NEW DISTRICT': getValue(['NEW DISTRICT'], ''),
       'MANDAL': getValue(['MANDAL'], ''),
-      'Location Name': getValue(['LOCATIONNAME', 'Location Name'], ''),
+      'Location Name': getValue(['LOCATIONNAME', 'LOCATION NAME', 'Location Name'], ''),
       'LATITUDE': getValue(['LATITUDE'], ''),
       'LONGITUDE': getValue(['LONGITUDE'], ''),
       'CAMERA IP': ipValue,
-      'TYPE OF CAMERA': getValue(['Type of Camera', 'TYPE OF CAMERA'], ''),
+      'TYPE OF CAMERA': getValue(['Type of Camera', 'TYPE OF CAMERA', 'Type Of Camera'], ''),
       'TYPE OF Analytics': getValue(['Analytics Existed/Newly proposed', 'TYPE OF Analytics'], ''),
-      'POLE NO.': getValue(['POLE NO.', 'POLE NO'], ''),
+      'POLE NO.': getValue(['POLE NO.', 'POLE NO', 'POLE NO.']),
       'REF': getValue(['REF'], ''),
-      'POLICE STATION NAME': getValue(['POLICE STATION NAME'], ''),
+      'POLICE STATION NAME': getValue(['POLICE STATION NAME', 'POLICE STATION NAME'], ''),
       'Additional/New Analytics required': getValue(['Additional/New Analytics required'], ''),
       'Remarks if any': getValue(['Remarks if any'], ''),
     };
@@ -116,6 +121,12 @@ export async function loadCameraDataFromExcel(filePath: string): Promise<Map<str
     // Convert to JSON (raw data)
     const rawData: any[] = XLSX.utils.sheet_to_json(worksheet);
     console.log(`Loaded ${rawData.length} rows from Excel`);
+    
+    // Log first row to see column names
+    if (rawData.length > 0) {
+      console.log('First row column names:', Object.keys(rawData[0]));
+      console.log('First row sample:', Object.fromEntries(Object.entries(rawData[0]).slice(0, 10)));
+    }
     
     // Normalize all rows to standard format
     const normalizedData: CameraData[] = rawData.map(normalizeExcelRow);
@@ -169,12 +180,19 @@ export async function loadCameraDataFromExcel(filePath: string): Promise<Map<str
         // Log first few IPs for debugging
         if (index < 10) {
           console.log(`Excel IP [${index}]: "${ip}" -> normalized: "${normalized}"`);
+          console.log(`  Full row data:`, {
+            'S.No': row['S.No'],
+            'CAMERA IP': row['CAMERA IP'],
+            'Location Name': row['Location Name'],
+            'POLE NO.': row['POLE NO.'],
+            'REF': row['REF']
+          });
         }
       } else if (index < 10) {
         // Log rows without IP for debugging
         console.warn(`Row ${index} has no IP address. CAMERA IP value:`, row['CAMERA IP']);
         console.warn(`  Available keys:`, Object.keys(row));
-        console.warn(`  Raw row sample:`, Object.fromEntries(Object.entries(row).slice(0, 5)));
+        console.warn(`  Raw row sample:`, Object.fromEntries(Object.entries(row).slice(0, 10)));
       }
     });
     
